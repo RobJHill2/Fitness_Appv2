@@ -142,4 +142,7 @@
       <Name>Fitness_Appv2</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\dumbell_icon.png" />
+  </ItemGroup>
 </Project>

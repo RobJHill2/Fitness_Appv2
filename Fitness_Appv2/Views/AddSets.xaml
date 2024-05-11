@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Fitness_Appv2.Views.AddSets">
+    <StackLayout>
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto">
+            <Entry x:Name="xcizeInput" Placeholder="Input Exercise" Grid.Row="0"/>
+            <Entry x:Name="repsInput" Placeholder="Input Reps" Keyboard="Numeric" Grid.Row="1"/>
+            <Entry x:Name="weightInput" Placeholder="Input Weight" Keyboard="Numeric" Grid.Row="2"/>
+            <Button x:Name="submitSet" Text="Submit Set" Clicked="submitSet_Clicked" Grid.Row="3"/>
+            <Button x:Name="clearInputs" Text="Clear" Clicked="clearInputs_Clicked" Grid.Row="4"/>
+            <CollectionView x:Name="testDataView" Grid.Row="5" BackgroundColor="Orange">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout>
+                            <Label Text="{Binding Id}"
+                               TextColor="Black"
+                               FontSize="Medium"/>
+                            <Label Text="{Binding XcizeAttribute}"
+                               TextColor="Black"
+                               FontSize="Medium"/>
+                            <Label Text="{Binding RepsAttribute}"
+                               TextColor="Black"
+                               FontSize="Medium"/>
+                            <Label Text="{Binding WeightAttribute}"
+                               TextColor="Black"
+                               FontSize="Medium"/>
+                            <Label Text="{Binding DateAttribute}"
+                               TextColor="Black"
+                               FontSize="Medium"/>
+
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <!--<Button x:Name="tempButton" Text = "Custom Button" Clicked="tempButton_Clicked" Grid.Row="5"/>-->
+        </Grid>
+    </StackLayout>
+</ContentPage>
