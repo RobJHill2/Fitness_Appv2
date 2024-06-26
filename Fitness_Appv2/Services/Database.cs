@@ -12,7 +12,7 @@ namespace Fitness_Appv2.Services
         public Database(string dbPath) // Database class constructor
         {
             _dbcon = new SQLiteAsyncConnection(dbPath);
-            _dbcon.CreateTableAsync<testTable>();
+            _dbcon.CreateTableAsync<testTable>(); // Creates testTable on startup
         }
         public Task<List<testTable>> GetTestDataAsync()
         {

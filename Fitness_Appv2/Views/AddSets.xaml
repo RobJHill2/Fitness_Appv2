@@ -4,11 +4,11 @@
              x:Class="Fitness_Appv2.Views.AddSets">
     <StackLayout>
         <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto">
-            <Entry x:Name="xcizeInput" Placeholder="Input Exercise" Grid.Row="0"/>
+            <Entry x:Name="xciseInput" Placeholder="Input Exercise" Grid.Row="0"/>
             <Entry x:Name="repsInput" Placeholder="Input Reps" Keyboard="Numeric" Grid.Row="1"/>
             <Entry x:Name="weightInput" Placeholder="Input Weight" Keyboard="Numeric" Grid.Row="2"/>
             <Button x:Name="submitSet" Text="Submit Set" Clicked="submitSet_Clicked" Grid.Row="3"/>
-            <Button x:Name="clearInputs" Text="Clear" Clicked="clearInputs_Clicked" Grid.Row="4"/>
+            <Button x:Name="clearInputs" Text="Clear Inputs" Clicked="clearInputs_Clicked" Grid.Row="4"/>
             <CollectionView x:Name="testDataView" Grid.Row="5" BackgroundColor="Orange">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>

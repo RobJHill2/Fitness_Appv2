@@ -23,16 +23,16 @@ namespace Fitness_Appv2.Views
         }
         private async void submitSet_Clicked(object sender, EventArgs e)
         {
-            string xcize = xcizeInput.Text;
+            string xcise = xciseInput.Text;
             int reps = Convert.ToInt16(repsInput.Text);
             float weight = Convert.ToSingle(weightInput.Text);
             DateTime date = DateTime.Now;
-            System.Diagnostics.Debug.WriteLine("Clicked: xcize = {0}; reps = {1}; weight = {2}", xcize, reps, weight);
-            if ((!string.IsNullOrEmpty(xcize)) && (reps > 0) && (weight > 0)) //sanitisation
+            System.Diagnostics.Debug.WriteLine("Clicked: xcise = {0}; reps = {1}; weight = {2}", xcise, reps, weight);
+            if ((!string.IsNullOrEmpty(xcise)) && (reps > 0) && (weight > 0)) //sanitisation
             {
                 await App.Database.SaveTestDataAsync(new Services.testTable
                 {
-                    XcizeAttribute = xcize,
+                    XciseAttribute = xcise,
                     RepsAttribute = reps,
                     WeightAttribute = weight,
                     DateAttribute = date
@@ -43,9 +43,9 @@ namespace Fitness_Appv2.Views
                 ((Button)sender).Text = "Submit Set";
             }
         }
-        private async void clearInputs_Clicked(object sender, EventArgs e)
+        private void clearInputs_Clicked(object sender, EventArgs e)
         {
-            xcizeInput.Text = repsInput.Text = weightInput.Text = "";
+            xciseInput.Text = repsInput.Text = weightInput.Text = "";
         }
         private async void tempButton_Clicked(object sender, EventArgs e)
         {
