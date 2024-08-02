@@ -17,5 +17,19 @@
                 </chart:NumericalAxis.Title>
             </chart:NumericalAxis>
         </chart:SfChart.SecondaryAxis>
+
+        <chart:SfChart.Series>
+            <chart:LineSeries                
+                x:Name="ChartSeries"
+                XBindingPath="DateAttribute"
+                YBindingPath="WeightAttribute">
+            </chart:LineSeries>
+        </chart:SfChart.Series>
+
+        <chart:SfChart.ChartBehaviors>
+            <chart:ChartZoomPanBehavior EnablePanning ="true" EnableDoubleTap="true"/> <!--DoubleTap allows to zoom in -->
+        </chart:SfChart.ChartBehaviors>
+        <!--Could also add zoom factor-->
+        <!--https://devblogs.microsoft.com/xamarin/visualize-your-data-with-charts-graphs-and-xamarin-forms/ -->
     </chart:SfChart>
 </ContentPage>

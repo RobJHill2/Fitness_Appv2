@@ -18,6 +18,7 @@ namespace Fitness_Appv2.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
+            ChartSeries.ItemsSource = await App.Database.GetTestDataAsync();
         }
     }
 }
