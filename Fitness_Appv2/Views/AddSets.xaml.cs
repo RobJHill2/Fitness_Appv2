@@ -9,7 +9,7 @@ using Xamarin.Forms.Xaml;
 
 namespace Fitness_Appv2.Views
 {
-    [XamlCompilation(XamlCompilationOptions.Compile)]
+    [XamlCompilation(XamlCompilationOptions.Compile)] // required for collection view in XAML file
     public partial class AddSets : ContentPage
     {
         public AddSets()

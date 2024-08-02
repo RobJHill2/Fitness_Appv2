@@ -20,13 +20,14 @@ namespace Fitness_Appv2
 
         public App()
         {
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NCaF5cXmZCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWXdecnRRQmZeVEx2Vks=");
+            System.Diagnostics.Debug.WriteLine("Hello World");
             InitializeComponent();
             MainPage = new AppShell();
         }
 
         protected override void OnStart()
         {
-            System.Diagnostics.Debug.WriteLine("Hello World");
         }
 
         protected override void OnSleep()
