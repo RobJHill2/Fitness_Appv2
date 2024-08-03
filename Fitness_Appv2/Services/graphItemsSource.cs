@@ -6,7 +6,7 @@ namespace Fitness_Appv2.Services
 {
         public class graphItemsSource : testTable
         {
-            public float WorkDoneAttribute { get; set; }
+            public float OneRepMaxAttribute { get; set; }
         }
 }
 
