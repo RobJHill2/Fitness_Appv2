@@ -1,6 +1,8 @@
-﻿using SQLite;
+﻿using Fitness_Appv2.Views;
+using SQLite;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,9 +16,9 @@ namespace Fitness_Appv2.Services
             _dbcon = new SQLiteAsyncConnection(dbPath);
             _dbcon.CreateTableAsync<testTable>(); // Creates testTable on startup
         }
-        public Task<List<testTable>> GetTestDataAsync()
+        public async Task<List<testTable>> GetTestDataAsync()
         {
-            return _dbcon.Table<testTable>().ToListAsync(); //returns db as list
+            return await _dbcon.Table<testTable>().ToListAsync(); //returns db as list
         }
         public async Task<testTable> GetTestItemAsync(int id)
         {
@@ -26,9 +28,20 @@ namespace Fitness_Appv2.Services
         {
             return _dbcon.InsertAsync(testSaveData);
         }
-        public async Task<int> DeleteTestDataAsync(testTable deleteItem)
+        public Task<int> DeleteTestDataAsync(testTable deleteItem)
         {
-            return await _dbcon.DeleteAsync(deleteItem);
+            return _dbcon.DeleteAsync(deleteItem);
+        }
+
+        public async Task<List<graphItemsSource>> GetGraphTestDataAsync(string XciseValue)
+        {
+            return await _dbcon.QueryAsync<graphItemsSource>("SELECT (WeightAttribute * RepsAttribute) AS WorkDoneAttribute, DateAttribute FROM testTable WHERE XciseAttribute = ? ;", XciseValue);
+            // saves to a child class of testTable, so WorkDoneAttribute has its own property
+        }
+
+        public Task<List<testTable>> CustomMethod()
+        {
+            return _dbcon.QueryAsync<testTable>("DELETE FROM testTable");
         }
     }
 }

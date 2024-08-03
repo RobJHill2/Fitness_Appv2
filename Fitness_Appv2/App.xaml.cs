@@ -12,7 +12,7 @@ namespace Fitness_Appv2
         private static Database database; // Initiates new Database object 'database'
         public static Database Database { get {  // Getter for 'database' object
             if (database == null){
-                database = new Database(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "FitnessAppv2.db3"));
+                database = new Database(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "FitnessAppv2.db3")); // creates database on disk
             }
                 return database;
             }

@@ -22,10 +22,10 @@
             <chart:LineSeries                
                 x:Name="ChartSeries"
                 XBindingPath="DateAttribute"
-                YBindingPath="WeightAttribute">
+                YBindingPath="WorkDoneAttribute">
             </chart:LineSeries>
         </chart:SfChart.Series>
-
+ 
         <chart:SfChart.ChartBehaviors>
             <chart:ChartZoomPanBehavior EnablePanning ="true" EnableDoubleTap="true"/> <!--DoubleTap allows to zoom in -->
         </chart:SfChart.ChartBehaviors>

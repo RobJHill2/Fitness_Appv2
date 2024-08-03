@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Fitness_Appv2.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,7 +25,7 @@ namespace Fitness_Appv2.Views
         private async void submitSet_Clicked(object sender, EventArgs e)
         {
             string xcise = xciseInput.Text;
-            int reps = Convert.ToInt16(repsInput.Text);
+            float reps = Convert.ToSingle(repsInput.Text);
             float weight = Convert.ToSingle(weightInput.Text);
             DateTime date = DateTime.Now;
             System.Diagnostics.Debug.WriteLine("Clicked: xcise = {0}; reps = {1}; weight = {2}", xcise, reps, weight);
@@ -49,8 +50,8 @@ namespace Fitness_Appv2.Views
         }
         private async void tempButton_Clicked(object sender, EventArgs e)
         {
-            // currently deletes oldest item in testTable
-            await App.Database.DeleteTestDataAsync((await App.Database.GetTestItemAsync(1)));
+            // currently deletes all items in table
+            await App.Database.CustomMethod();
             testDataView.ItemsSource = await App.Database.GetTestDataAsync();
         }
     }

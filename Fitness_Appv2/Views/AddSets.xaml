@@ -9,14 +9,14 @@
             <Entry x:Name="weightInput" Placeholder="Input Weight" Keyboard="Numeric" Grid.Row="2"/>
             <Button x:Name="submitSet" Text="Submit Set" Clicked="submitSet_Clicked" Grid.Row="3"/>
             <Button x:Name="clearInputs" Text="Clear Inputs" Clicked="clearInputs_Clicked" Grid.Row="4"/>
-            <CollectionView x:Name="testDataView" Grid.Row="5" BackgroundColor="Orange">
+            <CollectionView x:Name="testDataView" Grid.Row="5" BackgroundColor="White">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <StackLayout>
                             <Label Text="{Binding Id}"
                                TextColor="Black"
                                FontSize="Medium"/>
-                            <Label Text="{Binding XcizeAttribute}"
+                            <Label Text="{Binding XciseAttribute}"
                                TextColor="Black"
                                FontSize="Medium"/>
                             <Label Text="{Binding RepsAttribute}"
@@ -33,7 +33,7 @@
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-            <!--<Button x:Name="tempButton" Text = "Custom Button" Clicked="tempButton_Clicked" Grid.Row="5"/>-->
+            <!--<Button x:Name="tempButton" Text = "Custom Button" Clicked="tempButton_Clicked" Grid.Row="6"/>-->
         </Grid>
     </StackLayout>
 </ContentPage>

@@ -10,7 +10,7 @@ namespace Fitness_Appv2.Services
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         public string XciseAttribute { get; set; }
-        public int RepsAttribute { get; set; }
+        public float RepsAttribute { get; set; }
         public float WeightAttribute { get; set; }
         public DateTime DateAttribute { get; set; }
     }
