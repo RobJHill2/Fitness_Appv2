@@ -28,6 +28,17 @@ namespace Fitness_Appv2.Views
             float reps = Convert.ToSingle(repsInput.Text);
             float weight = Convert.ToSingle(weightInput.Text);
             DateTime date = DateTime.Now;
+            float e1RMax;
+            if (reps > 1 && reps <= 7.5)
+            {
+                e1RMax = weight * (36 / (37 - reps));
+            } 
+            else
+            {
+                e1RMax = weight * Convert.ToSingle(Math.Pow(reps, 0.1));
+            }
+            // 1RM = w * (36/(37-r)) is the Brzyki Formula. It is best for 1 < r <= 7.5
+            // 1RM = w * r^0.1 is the Lombardi Formula. It is best for r <= 1 U r > 7.5  
             System.Diagnostics.Debug.WriteLine("Clicked: xcise = {0}; reps = {1}; weight = {2}", xcise, reps, weight);
             if ((!string.IsNullOrEmpty(xcise)) && (reps > 0) && (weight > 0)) //sanitisation
             {
@@ -36,7 +47,8 @@ namespace Fitness_Appv2.Views
                     XciseAttribute = xcise,
                     RepsAttribute = reps,
                     WeightAttribute = weight,
-                    DateAttribute = date
+                    DateAttribute = date,
+                    e1RMaxAttribute = e1RMax
                 }); // passes record obj into save method
                 testDataView.ItemsSource = await App.Database.GetTestDataAsync();
                 ((Button)sender).Text = "Submitted";

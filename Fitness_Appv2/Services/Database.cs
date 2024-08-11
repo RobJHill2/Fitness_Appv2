@@ -33,11 +33,11 @@ namespace Fitness_Appv2.Services
             return _dbcon.DeleteAsync(deleteItem);
         }
 
-        public async Task<List<graphItemsSource>> GetGraphTestDataAsync(string XciseValue)
+        public async Task<List<testTable>> GetXciseTestDataAsync(string XciseValue)
+
         {
-            return await _dbcon.QueryAsync<graphItemsSource>("SELECT (WeightAttribute * (36/(37-RepsAttribute))) AS OneRepMaxAttribute, DateAttribute FROM testTable WHERE XciseAttribute = ? ;", XciseValue);
-            // w * (36/(37-r)) is the Brzyki Formula
-            // saves to a child class of testTable, so 1RMaxAttribute has its own property
+            return await _dbcon.QueryAsync<testTable>("SELECT * FROM testTable WHERE XciseAttribute = ?;", XciseValue);
+            // ? notation is specific to this function, normal interpolation doesn't seem to work
         }
 
         public Task<List<testTable>> CustomMethod()

@@ -22,7 +22,7 @@
             <chart:LineSeries                
                 x:Name="ChartSeries"
                 XBindingPath="DateAttribute"
-                YBindingPath="OneRepMaxAttribute">
+                YBindingPath="e1RMaxAttribute">
             </chart:LineSeries>
         </chart:SfChart.Series>
  

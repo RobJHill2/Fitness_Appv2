@@ -13,27 +13,33 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <StackLayout>
+                            <Label Text="ID"/>
                             <Label Text="{Binding Id}"
                                TextColor="Black"
                                FontSize="Medium"/>
+                            <Label Text="Exercise"/>
                             <Label Text="{Binding XciseAttribute}"
                                TextColor="Black"
                                FontSize="Medium"/>
-                            <Label Text="{Binding RepsAttribute}"
+                            <Label Text="Reps"/>
+                                <Label Text="{Binding RepsAttribute}"
                                TextColor="Black"
                                FontSize="Medium"/>
-                            <Label Text="{Binding WeightAttribute}"
+                            <Label Text="Weight"/>
+                                <Label Text="{Binding WeightAttribute}"
                                TextColor="Black"
                                FontSize="Medium"/>
-                            <Label Text="{Binding DateAttribute}"
+                            <Label Text="Date"/>
+                                <Label Text="{Binding DateAttribute}"
                                TextColor="Black"
                                FontSize="Medium"/>
+                            <Label Text="------------------------------------" FontSize="Medium" TextColor="Black"/>
 
                         </StackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-            <!--<Button x:Name="tempButton" Text = "Custom Button" Clicked="tempButton_Clicked" Grid.Row="6"/>-->
+            <Button x:Name="tempButton" Text = "Custom Button" Clicked="tempButton_Clicked" Grid.Row="6"/>
         </Grid>
     </StackLayout>
 </ContentPage>
