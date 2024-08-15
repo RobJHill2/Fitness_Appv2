@@ -32,6 +32,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\DefineNewRoutine.xaml.cs">
+      <DependentUpon>DefineNewRoutine.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Xcises.xaml.cs">
+      <DependentUpon>Xcises.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Routines.xaml.cs">
+      <DependentUpon>Routines.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Stats.xaml.cs">
       <DependentUpon>Stats.xaml</DependentUpon>
     </Compile>

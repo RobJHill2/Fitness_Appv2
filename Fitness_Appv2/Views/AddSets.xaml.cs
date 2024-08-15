@@ -20,51 +20,58 @@ namespace Fitness_Appv2.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            testDataView.ItemsSource = await App.Database.GetTestDataAsync();
+            testDataView.ItemsSource = await App.Database.GetTestMediansAsync();
+            xcisePicker.ItemsSource = await App.Database.GetXciseNamesAsync();
         }
-        private async void submitSet_Clicked(object sender, EventArgs e)
+        private async void SubmitSet_ClickedAsync(object sender, EventArgs e)
         {
-            string xcise = xciseInput.Text;
-            float reps = Convert.ToSingle(repsInput.Text);
-            float weight = Convert.ToSingle(weightInput.Text);
-            DateTime date = DateTime.Now;
-            float e1RMax;
-            if (reps > 1 && reps <= 7.5)
+            if (((Button)sender).Text == "Submit Set") // this is to prevent double clicks registering twice
             {
-                e1RMax = weight * (36 / (37 - reps));
-            } 
-            else
-            {
-                e1RMax = weight * Convert.ToSingle(Math.Pow(reps, 0.1));
-            }
-            // 1RM = w * (36/(37-r)) is the Brzyki Formula. It is best for 1 < r <= 7.5
-            // 1RM = w * r^0.1 is the Lombardi Formula. It is best for r <= 1 U r > 7.5  
-            System.Diagnostics.Debug.WriteLine("Clicked: xcise = {0}; reps = {1}; weight = {2}", xcise, reps, weight);
-            if ((!string.IsNullOrEmpty(xcise)) && (reps > 0) && (weight > 0)) //sanitisation
-            {
-                await App.Database.SaveTestDataAsync(new Services.testTable
+                XcisesTable item = xcisePicker.SelectedItem as XcisesTable;
+                string xcise = item.XciseNameAttribute;
+                float reps = Convert.ToSingle(repsInput.Text);
+                float weight = Convert.ToSingle(weightInput.Text);
+                DateTime date = DateTime.Today;
+                System.Diagnostics.Debug.WriteLine("Clicked: xcise = {0}; reps = {1}; weight = {2}", xcise, reps, weight);
+                if ((reps > 0) && (weight > 0)) //sanitisation
                 {
-                    XciseAttribute = xcise,
-                    RepsAttribute = reps,
-                    WeightAttribute = weight,
-                    DateAttribute = date,
-                    e1RMaxAttribute = e1RMax
-                }); // passes record obj into save method
-                testDataView.ItemsSource = await App.Database.GetTestDataAsync();
-                ((Button)sender).Text = "Submitted";
-                await Task.Delay(2000);
-                ((Button)sender).Text = "Submit Set";
+                    ((Button)sender).Text = "Submitted";
+                    float e1RMax;
+                    if ( 1 <= reps && reps < 7.614) { e1RMax = weight * 36 / (37 - reps); }
+                                               else { e1RMax = weight * Convert.ToSingle(Math.Pow(reps, 0.1)); }
+                    // 1RM = w * (36/(37-r)) is the Brzyki Formula. It is more accurate* for 1 <= r < 7.614
+                    // 1RM = w * r^0.1 is the Lombardi Formula. It is more accurate* for r < 1 U r >= 7.614
+                    // * Tested with personal workout data
+                    await App.Database.SaveTestDataAsync(new TestTable
+                    {
+                        XciseAttribute = xcise,
+                        RepsAttribute = reps,
+                        WeightAttribute = weight,
+                        DateAttribute = date,
+                        E1RMaxAttribute = e1RMax,
+                        DailyMedianTaken = false,
+                    }); // passes record obj into save method
+                    testDataView.ItemsSource = await App.Database.GetTestDataAsync();
+                    
+                    await Task.Delay(1500);
+                    ((Button)sender).Text = "Submit Set";
+                }
             }
         }
-        private void clearInputs_Clicked(object sender, EventArgs e)
+        private void ClearInputs_Clicked(object sender, EventArgs e)
         {
-            xciseInput.Text = repsInput.Text = weightInput.Text = "";
+            repsInput.Text = weightInput.Text = "";
         }
-        private async void tempButton_Clicked(object sender, EventArgs e)
+        private async void TempButton_Clicked(object sender, EventArgs e)
         {
-            // currently deletes all items in table
+            // currently deletes all
             await App.Database.CustomMethod();
             testDataView.ItemsSource = await App.Database.GetTestDataAsync();
+        }
+
+        private void xcisePicker_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -4,32 +4,40 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:chart="clr-namespace:Syncfusion.SfChart.XForms;assembly=Syncfusion.SfChart.XForms"
              x:Class="Fitness_Appv2.Views.Stats">
+    <Grid RowDefinitions="Auto,*">
+        <Picker x:Name="picker" 
+                Title="Select Exercise" 
+                ItemDisplayBinding="{Binding XciseNameAttribute}"
+                SelectedIndexChanged="Picker_ChangedAsync"
+                Grid.Row="0" /> <!--Binding displays an attribute of each record in the data source-->
+        
+        
+        <chart:SfChart x:Name="Chart" Grid.Row="1">
+            
+            <chart:SfChart.PrimaryAxis>
+                <chart:DateTimeAxis/>
+            </chart:SfChart.PrimaryAxis>
 
-    <chart:SfChart x:Name="Chart">
-        <chart:SfChart.PrimaryAxis>
-            <chart:DateTimeAxis/>
-        </chart:SfChart.PrimaryAxis>
+            <chart:SfChart.SecondaryAxis>
+                <chart:NumericalAxis>
+                    <chart:NumericalAxis.Title>
+                        <chart:ChartAxisTitle Text = "e1RM"/>
+                    </chart:NumericalAxis.Title>
+                </chart:NumericalAxis>
+            </chart:SfChart.SecondaryAxis>
 
-        <chart:SfChart.SecondaryAxis>
-            <chart:NumericalAxis>
-                <chart:NumericalAxis.Title>
-                    <chart:ChartAxisTitle Text = "Work Done"/>
-                </chart:NumericalAxis.Title>
-            </chart:NumericalAxis>
-        </chart:SfChart.SecondaryAxis>
-
-        <chart:SfChart.Series>
-            <chart:LineSeries                
-                x:Name="ChartSeries"
-                XBindingPath="DateAttribute"
-                YBindingPath="e1RMaxAttribute">
-            </chart:LineSeries>
-        </chart:SfChart.Series>
+            <chart:SfChart.Series>
+                <chart:LineSeries                
+                    x:Name="chartSeries"
+                    XBindingPath="DateAttribute"
+                    YBindingPath="E1RMaxAttribute"/>
+            </chart:SfChart.Series>
  
-        <chart:SfChart.ChartBehaviors>
-            <chart:ChartZoomPanBehavior EnablePanning ="true" EnableDoubleTap="true"/> <!--DoubleTap allows to zoom in -->
-        </chart:SfChart.ChartBehaviors>
+            <chart:SfChart.ChartBehaviors>
+                <chart:ChartZoomPanBehavior EnablePanning ="true" EnableDoubleTap="true"/> <!--DoubleTap allows to zoom in -->
+            </chart:SfChart.ChartBehaviors>
         <!--Could also add zoom factor-->
         <!--https://devblogs.microsoft.com/xamarin/visualize-your-data-with-charts-graphs-and-xamarin-forms/ -->
-    </chart:SfChart>
+        </chart:SfChart>
+    </Grid>
 </ContentPage>

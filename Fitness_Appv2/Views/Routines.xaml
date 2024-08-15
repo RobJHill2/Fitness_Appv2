@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Fitness_Appv2.Views.Routines">
+    <StackLayout>
+        <Grid RowDefinitions="Auto, Auto, Auto">
+            <Button x:Name ="NewRoutine" Text= "Define New Routine" Clicked="NewRoutine_Clicked" Grid.Row="1"/>
+        </Grid>
+    </StackLayout>
+</ContentPage>

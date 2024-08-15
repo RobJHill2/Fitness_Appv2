@@ -5,22 +5,17 @@ using System.Text;
 
 namespace Fitness_Appv2.Services
 {
-    public class testTable
-    {
+    public class TestTable { 
+
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         public string XciseAttribute { get; set; }
-        public float RepsAttribute { get; set; }
+        // This is a property, {get; set;} is just shorthand for a method that retrieves/allocates the value of the property
+        public float RepsAttribute { get; set; } // is float in case user wants to record half reps
         public float WeightAttribute { get; set; }
         public DateTime DateAttribute { get; set; }
-        public float e1RMaxAttribute { get; set; }
-        public testTable()
-        {
-            System.Diagnostics.Debug.WriteLine("Record Created with WeightAttribute = {0} and RepsAttribute = {1}", Convert.ToString(WeightAttribute), Convert.ToString(RepsAttribute));
-
-        }
-
-
+        public float E1RMaxAttribute { get; set; }
+        public bool DailyMedianTaken { get; set; }
     }
 }
 

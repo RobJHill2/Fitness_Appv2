@@ -4,42 +4,57 @@
              x:Class="Fitness_Appv2.Views.AddSets">
     <StackLayout>
         <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto">
-            <Entry x:Name="xciseInput" Placeholder="Input Exercise" Grid.Row="0"/>
+            <Picker x:Name="xcisePicker" 
+                    Title="Select Exercise"
+                    ItemDisplayBinding="{Binding XciseNameAttribute}"
+                    Grid.Row="0"/>
             <Entry x:Name="repsInput" Placeholder="Input Reps" Keyboard="Numeric" Grid.Row="1"/>
             <Entry x:Name="weightInput" Placeholder="Input Weight" Keyboard="Numeric" Grid.Row="2"/>
-            <Button x:Name="submitSet" Text="Submit Set" Clicked="submitSet_Clicked" Grid.Row="3"/>
-            <Button x:Name="clearInputs" Text="Clear Inputs" Clicked="clearInputs_Clicked" Grid.Row="4"/>
+            <Button x:Name="submitSet" Text="Submit Set" Clicked="SubmitSet_ClickedAsync" Grid.Row="3"/>
+            <Button x:Name="clearInputs" Text="Clear Inputs" Clicked="ClearInputs_Clicked" Grid.Row="4"/>
             <CollectionView x:Name="testDataView" Grid.Row="5" BackgroundColor="White">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <StackLayout>
                             <Label Text="ID"/>
-                            <Label Text="{Binding Id}"
-                               TextColor="Black"
-                               FontSize="Medium"/>
+                                <Label Text="{Binding Id}"
+                                   TextColor="Black"
+                                   FontSize="Medium"/>
                             <Label Text="Exercise"/>
-                            <Label Text="{Binding XciseAttribute}"
-                               TextColor="Black"
-                               FontSize="Medium"/>
+                                <Label Text="{Binding XciseAttribute}"
+                                   TextColor="Black"
+                                   FontSize="Medium"/>
                             <Label Text="Reps"/>
                                 <Label Text="{Binding RepsAttribute}"
-                               TextColor="Black"
-                               FontSize="Medium"/>
+                                   TextColor="Black"
+                                   FontSize="Medium"/>
                             <Label Text="Weight"/>
                                 <Label Text="{Binding WeightAttribute}"
-                               TextColor="Black"
-                               FontSize="Medium"/>
+                                   TextColor="Black"
+                                   FontSize="Medium"/>
                             <Label Text="Date"/>
                                 <Label Text="{Binding DateAttribute}"
-                               TextColor="Black"
-                               FontSize="Medium"/>
+                                   TextColor="Black"
+                                   FontSize="Medium"/>
+                            <Label Text="e1RM"/>
+                                <Label Text="{Binding E1RMaxAttribute}"
+                                    TextColor="Black"
+                                    FontSize="Medium"/>
+                            <Label Text="DailyMedianTaken"/>
+                                <Label Text="{Binding DailyMedianTaken}"
+                                    TextColor="Black"
+                                    FontSize="Medium"/>
+                            <Label Text="IsDailyMedian"/>
+                                <Label Text="{Binding IsDailyMedian}"
+                                    TextColor="Black"
+                                    FontSize="Medium"/>
                             <Label Text="------------------------------------" FontSize="Medium" TextColor="Black"/>
-
                         </StackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-            <Button x:Name="tempButton" Text = "Custom Button" Clicked="tempButton_Clicked" Grid.Row="6"/>
+
+            <Button x:Name="tempButton" Text = "Custom Button" Clicked="TempButton_Clicked" Grid.Row="6"/>
         </Grid>
     </StackLayout>
 </ContentPage>
