@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Fitness_Appv2.Views.AddSets">
     <StackLayout>
-        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto">
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*,Auto">
             <Picker x:Name="xcisePicker" 
                     Title="Select Exercise"
                     ItemDisplayBinding="{Binding XciseNameAttribute}"
@@ -12,7 +12,8 @@
             <Entry x:Name="weightInput" Placeholder="Input Weight" Keyboard="Numeric" Grid.Row="2"/>
             <Button x:Name="submitSet" Text="Submit Set" Clicked="SubmitSet_ClickedAsync" Grid.Row="3"/>
             <Button x:Name="clearInputs" Text="Clear Inputs" Clicked="ClearInputs_Clicked" Grid.Row="4"/>
-            <CollectionView x:Name="testDataView" Grid.Row="5" BackgroundColor="White">
+            <Label x:Name="inputObjection" Grid.Row="5"/>
+            <CollectionView x:Name="DataView" Grid.Row="6" BackgroundColor="White">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <StackLayout>
@@ -54,7 +55,7 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
-            <Button x:Name="tempButton" Text = "Custom Button" Clicked="TempButton_Clicked" Grid.Row="6"/>
+            <Button x:Name="tempButton" Text = "Custom Button" Clicked="TempButton_Clicked" Grid.Row="7"/>
         </Grid>
     </StackLayout>
 </ContentPage>

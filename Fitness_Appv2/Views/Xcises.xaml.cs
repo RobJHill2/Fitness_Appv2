@@ -30,7 +30,7 @@ namespace Fitness_Appv2.Views
                 if (!string.IsNullOrEmpty(name) && !existingXcises.Contains(name))
                 {
                     submitXcise.Text = "Submitted";
-                    await App.Database.SaveXciseAsync(new XcisesTable
+                    await App.Database.SaveXcise(new XcisesTable
                     {
                         XciseNameAttribute = name,
                         IsBodyweightAttribute = isBodyweight,

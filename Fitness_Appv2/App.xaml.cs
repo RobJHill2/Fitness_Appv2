@@ -9,7 +9,7 @@ namespace Fitness_Appv2
 {
     public partial class App : Application
     {
-        private static Database database; // Initiates new Database object 'database'
+        private static Database database; // Initiates new Database object 'database' as a property
         public static Database Database
         {
             get
@@ -24,7 +24,7 @@ namespace Fitness_Appv2
 
         public App()
         {
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NCaF5cXmZCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWXdecnRRQmZeVEx2Vks=");
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NDaF5cWWtCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWH9fcXVVR2RYVURxXUE=");
             System.Diagnostics.Debug.WriteLine("Hello World");
             InitializeComponent();
             MainPage = new AppShell();

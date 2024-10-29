@@ -20,7 +20,7 @@ namespace Fitness_Appv2.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            testDataView.ItemsSource = await App.Database.GetTestMediansAsync();
+            DataView.ItemsSource = await App.Database.GetSetsDataAsync();
             xcisePicker.ItemsSource = await App.Database.GetXciseNamesAsync();
         }
         private async void SubmitSet_ClickedAsync(object sender, EventArgs e)
@@ -28,11 +28,27 @@ namespace Fitness_Appv2.Views
             if (((Button)sender).Text == "Submit Set") // this is to prevent double clicks registering twice
             {
                 XcisesTable item = xcisePicker.SelectedItem as XcisesTable;
-                string xcise = item.XciseNameAttribute;
+                int xciseId = item.Id; // record Id instead?
                 float reps = Convert.ToSingle(repsInput.Text);
-                float weight = Convert.ToSingle(weightInput.Text);
+                float weight;
+                if (!item.IsBodyweightAttribute) {
+                    weight = Convert.ToSingle(weightInput.Text);
+                }
+                else
+;                {
+                    UserDataTable userdata = (await App.Database.GetLatestUserDataAsync());
+                    if (userdata != null)
+                    {
+                        weight = (await App.Database.GetLatestUserDataAsync()).BodyweightAttribute + Convert.ToSingle(weightInput.Text);
+                    }
+                    else
+                    {
+                        inputObjection.Text = "This is a Bodyweight Exercise. Please record your bodyweight on the home page.";
+                        return;
+                    }
+                }
                 DateTime date = DateTime.Today;
-                System.Diagnostics.Debug.WriteLine("Clicked: xcise = {0}; reps = {1}; weight = {2}", xcise, reps, weight);
+                System.Diagnostics.Debug.WriteLine("Clicked: xcise = {0}; reps = {1}; weight = {2}", xciseId, reps, weight);
                 if ((reps > 0) && (weight > 0)) //sanitisation
                 {
                     ((Button)sender).Text = "Submitted";
@@ -41,20 +57,24 @@ namespace Fitness_Appv2.Views
                                                else { e1RMax = weight * Convert.ToSingle(Math.Pow(reps, 0.1)); }
                     // 1RM = w * (36/(37-r)) is the Brzyki Formula. It is more accurate* for 1 <= r < 7.614
                     // 1RM = w * r^0.1 is the Lombardi Formula. It is more accurate* for r < 1 U r >= 7.614
-                    // * Tested with personal workout data
-                    await App.Database.SaveTestDataAsync(new TestTable
+                    // 7.614 and 1 are the intersections between the graphs, chosen as these ranges match my personal data and also avoiding jumps in e1RMax
+                    await App.Database.SaveSets(new SetsTable
                     {
-                        XciseAttribute = xcise,
+                        XciseIdAttribute = xciseId,
                         RepsAttribute = reps,
                         WeightAttribute = weight,
                         DateAttribute = date,
                         E1RMaxAttribute = e1RMax,
                         DailyMedianTaken = false,
                     }); // passes record obj into save method
-                    testDataView.ItemsSource = await App.Database.GetTestDataAsync();
+                    DataView.ItemsSource = await App.Database.GetSetsDataAsync();
                     
                     await Task.Delay(1500);
                     ((Button)sender).Text = "Submit Set";
+                }
+                else
+                {
+                    inputObjection.Text = "Reps and Weight must be above 0 if it is not a Bodyweight Exercise";
                 }
             }
         }
@@ -66,7 +86,7 @@ namespace Fitness_Appv2.Views
         {
             // currently deletes all
             await App.Database.CustomMethod();
-            testDataView.ItemsSource = await App.Database.GetTestDataAsync();
+            DataView.ItemsSource = await App.Database.GetSetsDataAsync();
         }
 
         private void xcisePicker_SelectedIndexChanged(object sender, EventArgs e)
