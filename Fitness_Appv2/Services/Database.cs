@@ -24,6 +24,8 @@ namespace Fitness_Appv2.Services
             _dbcon.CreateTableAsync<SetMediansTable>();
             _dbcon.CreateTableAsync<XcisesTable>();
             _dbcon.CreateTableAsync<UserDataTable>();
+            _dbcon.CreateTableAsync<RoutineComponentsTable>();
+            _dbcon.CreateTableAsync<RoutinesTable>();
             MaintainSetsDataAsync();
         }
         private async void MaintainSetsDataAsync()

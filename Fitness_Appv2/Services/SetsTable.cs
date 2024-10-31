@@ -9,11 +9,8 @@ namespace Fitness_Appv2.Services
 
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
-        public int XciseIdAttribute { get; set; }
         // This is a property, {get; set;} is just shorthand for a method that retrieves/allocates the value of the property
-        public float RepsAttribute { get; set; } 
-        // is float in case user wants to record half reps
-        public float WeightAttribute { get; set; }
+        public int XciseIdAttribute { get; set; } // FOREIGN KEY
         public DateTime DateAttribute { get; set; }
         public float E1RMaxAttribute { get; set; }
         public bool DailyMedianTaken { get; set; }

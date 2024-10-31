@@ -3,5 +3,28 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Fitness_Appv2.Views.DefineNewRoutine">
     <StackLayout>
+        <Grid RowDefinitions="*, Auto, Auto">
+            <CollectionView x:Name="ComponentsView" SelectionMode="Single" SelectionChanged="ComponentsView_SelectionChanged" BackgroundColor="White" Grid.Row="0">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout>
+                            <Label Text="{Binding Id}"/>
+                            <Label Text="{Binding XciseIdAttribute}"/>
+                            <Label Text="{Binding SetsAttribute}"/>
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <Grid x:Name = "ComponentsEdit" RowDefinitions= "Auto, Auto, Auto, Auto" IsVisible="False" Grid.Row="1">
+                <Picker x:Name="xcisePicker" 
+                        Title="Select Exercise"
+                        ItemDisplayBinding="{Binding XciseNameAttribute}"
+                        Grid.Row="0"/>
+                <Entry x:Name="setsInput" Placeholder="Input Reps" Keyboard="Numeric" Grid.Row="1"/>
+                <Button x:Name="saveComponent" Text="Save" Clicked="SaveComponent_Clicked" Grid.Row="2"/>
+                <Label x:Name="inputObjection" Grid.Row="3"/>
+            </Grid>
+            <Button x:Name="newComponent" Text = "Add Exercise" Clicked="NewComponent_Clicked" Grid.Row="2"/>
+        </Grid>
     </StackLayout>
 </ContentPage>

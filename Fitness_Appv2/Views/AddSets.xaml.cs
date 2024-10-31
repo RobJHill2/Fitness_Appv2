@@ -40,7 +40,7 @@ namespace Fitness_Appv2.Views
                     if (userdata != null)
                     {
                         weight = (await App.Database.GetLatestUserDataAsync()).BodyweightAttribute + Convert.ToSingle(weightInput.Text);
-                    }
+                    } // If it is a bodyweight exercise, must add bodyweight to any additional weight
                     else
                     {
                         inputObjection.Text = "This is a Bodyweight Exercise. Please record your bodyweight on the home page.";
@@ -49,7 +49,7 @@ namespace Fitness_Appv2.Views
                 }
                 DateTime date = DateTime.Today;
                 System.Diagnostics.Debug.WriteLine("Clicked: xcise = {0}; reps = {1}; weight = {2}", xciseId, reps, weight);
-                if ((reps > 0) && (weight > 0)) //sanitisation
+                if ((reps > 0) && ((weight > 0) | (weight >= 0 && item.IsBodyweightAttribute))) //sanitisation
                 {
                     ((Button)sender).Text = "Submitted";
                     float e1RMax;
@@ -61,8 +61,6 @@ namespace Fitness_Appv2.Views
                     await App.Database.SaveSets(new SetsTable
                     {
                         XciseIdAttribute = xciseId,
-                        RepsAttribute = reps,
-                        WeightAttribute = weight,
                         DateAttribute = date,
                         E1RMaxAttribute = e1RMax,
                         DailyMedianTaken = false,
@@ -87,11 +85,6 @@ namespace Fitness_Appv2.Views
             // currently deletes all
             await App.Database.CustomMethod();
             DataView.ItemsSource = await App.Database.GetSetsDataAsync();
-        }
-
-        private void xcisePicker_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }
