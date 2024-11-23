@@ -12,7 +12,7 @@
             <Entry x:Name="weightInput" Placeholder="Input Weight" Keyboard="Numeric" Grid.Row="2"/>
             <Button x:Name="submitSet" Text="Submit Set" Clicked="SubmitSet_ClickedAsync" Grid.Row="3"/>
             <Button x:Name="clearInputs" Text="Clear Inputs" Clicked="ClearInputs_Clicked" Grid.Row="4"/>
-            <Label x:Name="inputObjection" Grid.Row="5"/>
+            <Label x:Name="inputObjection" IsVisible="False" Grid.Row="5"/>
             <CollectionView x:Name="DataView" Grid.Row="6" BackgroundColor="White">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
@@ -22,7 +22,7 @@
                                    TextColor="Black"
                                    FontSize="Medium"/>
                             <Label Text="Exercise"/>
-                            <Label Text="{Binding XciseAttribute}"
+                            <Label Text="{Binding XciseIdAttribute}"
                                    TextColor="Black"
                                    FontSize="Medium"/> 
                             <Label Text="Date"/>

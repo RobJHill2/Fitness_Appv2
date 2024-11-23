@@ -3,8 +3,25 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Fitness_Appv2.Views.Routines">
     <StackLayout>
-        <Grid RowDefinitions="Auto, Auto, Auto">
-            <Button x:Name ="NewRoutine" Text= "Define New Routine" Clicked="NewRoutine_Clicked" Grid.Row="1"/>
+        <Grid RowDefinitions="*, Auto, Auto">
+            <CollectionView x:Name="RoutinesView" SelectionMode="Single" SelectionChanged="RoutinesView_SelectionChanged" BackgroundColor="White" Grid.Row="0">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <StackLayout>
+                                <Label Text="{Binding Id}"/>
+                                <Label Text="{Binding NameAttribute}"/>
+                            </StackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            
+            <Grid x:Name = "RoutineOptions" RowDefinitions= "Auto, Auto, Auto" IsVisible="False" Grid.Row="1">
+                <Button x:Name="editRoutine" Text="Edit" Clicked="EditRoutine_Clicked" Grid.Row="0"/>
+                <Button x:Name="deleteRoutine" Text="Delete" Clicked="DeleteRoutine_Clicked" Grid.Row="1"/>
+                <Button x:Name="logRoutine" Text="Log" Clicked="LogRoutine_Clicked" Grid.Row="2"/>
+            </Grid>
+            
+            <Button x:Name="newRoutine" Text = "Define New Routine" Clicked="NewRoutine_Clicked" Grid.Row="2"/>
         </Grid>
     </StackLayout>
 </ContentPage>

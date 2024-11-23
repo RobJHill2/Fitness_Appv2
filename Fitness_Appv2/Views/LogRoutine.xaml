@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Fitness_Appv2.Views.LogRoutine">
+    <StackLayout>
+        <Grid RowDefinitions="*, Auto, Auto">
+            <Grid x:Name="AlterRoutine" RowDefinitions="*, *, Auto" Grid.Row="0">
+                <CollectionView x:Name="ComponentsView" SelectionMode="Single" SelectionChanged="ComponentsView_SelectionChanged" BackgroundColor="White" Grid.Row="0">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <StackLayout>
+                                <Label Text="{Binding Id}"/>
+                                <Label Text="{Binding XciseId}"/>
+                                <Label Text="{Binding Sets}"/>
+                            </StackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            
+                <Grid x:Name = "ComponentsEdit" RowDefinitions= "Auto, Auto, Auto, Auto" IsVisible="False" Grid.Row="1">
+                    <Picker x:Name="xcisePicker" 
+                            Title="Select Exercise"
+                            ItemDisplayBinding="{Binding XciseNameAttribute}"
+                            Grid.Row="0"/>
+                    <Entry x:Name="setsInput" Placeholder="Input Sets" Keyboard="Numeric" Grid.Row="1"/>
+                    <Button x:Name="deleteComponent" Text="Delete" Clicked="DeleteComponent_Clicked" Grid.Row="2"/>
+                    <Button x:Name="continue" Text="Continue" Clicked="Continue_Clicked" Grid.Row="3"/>
+                </Grid>
+                <Button x:Name="newComponent" Text = "Add Exercise" Clicked="NewComponent_Clicked" Grid.Row="2"/>
+            </Grid>
+
+            <Grid x:Name="SetsData" RowDefinitions ="*, Auto, Auto" IsVisible="False" Grid.Row="0">
+                <CollectionView x:Name="SetsView" SelectionMode="Single" SelectionChanged="SetsView_SelectionChanged" BackgroundColor="White" Grid.Row="0">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <StackLayout>
+                                <Label Text="{Binding Index}"/>
+                                <Label Text="{Binding Reps}"/>
+                                <Label Text="{Binding Weight}"/>
+                            </StackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                <Grid x:Name = "SetEdit" RowDefinitions= "Auto, Auto, Auto" IsVisible="False" Grid.Row="1">
+                    <Entry x:Name="repsInput" Placeholder = "Input Reps" Keyboard="Numeric" Grid.Row="0"/>
+                    <Entry x:Name="weightInput" Placeholder= "Input Weight" Keyboard="Numeric" Grid.Row="1"/>
+                    <Button x:Name="saveSet" Text = "Save" Clicked = "SaveSet_Clicked" Grid.Row="2"/>
+                </Grid>
+                <Button x:Name="editFinished" Text="Back" Clicked="EditFinished_Clicked" Grid.Row="2"/>
+            </Grid>
+            <Button x:Name= "logWorkout" Text="Log Workout" Clicked="LogWorkout_Clicked" Grid.Row="1"/>
+            <Label x:Name="inputObjection" IsVisible="False" Grid.Row="2"/>
+        </Grid>
+    </StackLayout>
+</ContentPage>

@@ -12,8 +12,8 @@
 
   <ItemGroup>
     <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
-    <PackageReference Include="Syncfusion.Licensing" Version="26.2.13" />
-    <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="26.2.13" />
+    <PackageReference Include="Syncfusion.Licensing" Version="27.2.2" />
+    <PackageReference Include="Syncfusion.Xamarin.SfChart" Version="27.2.2" />
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2662" />  
     <PackageReference Include="Xamarin.Essentials" Version="1.8.1" />
   </ItemGroup>
@@ -32,8 +32,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\DefineNewRoutine.xaml.cs">
-      <DependentUpon>DefineNewRoutine.xaml</DependentUpon>
+    <Compile Update="Views\LogRoutine.xaml.cs">
+      <DependentUpon>LogRoutine.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\EditRoutine.xaml.cs">
+      <DependentUpon>EditRoutine.xaml</DependentUpon>
     </Compile>
     <Compile Update="Views\Xcises.xaml.cs">
       <DependentUpon>Xcises.xaml</DependentUpon>

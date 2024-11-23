@@ -20,12 +20,12 @@ namespace Fitness_Appv2.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            picker.ItemsSource = await App.Database.GetXciseNamesAsync(); // provides data source 
+            picker.ItemsSource = await App.Db.GetXciseNamesAsync(); // provides data source 
         }
         private async void Picker_ChangedAsync(object sender, EventArgs e) 
         {
             XcisesTable item = picker.SelectedItem as XcisesTable; // casting from 'object' type to 'SetsTable' so can access attributes
-            chartSeries.ItemsSource = await App.Database.GetXciseMediansAsync(item.Id);
+            chartSeries.ItemsSource = await App.Db.GetXciseMediansAsync(item.Id);
         }
     }
 }

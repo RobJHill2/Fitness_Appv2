@@ -9,17 +9,17 @@ namespace Fitness_Appv2
 {
     public partial class App : Application
     {
-        private static Database database; // Initiates new Database object 'database' as a property
-        public static Database Database
+        private static Database db; // Initiates new Db object 'db' as a property
+        public static Database Db
         {
             get
             {
-                if (database == null)
+                if (db == null)
                 {
-                    database = new Database(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "FitnessAppv2.db3")); // creates database on disk
+                    db = new Database(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "FitnessAppv2.db3")); // creates db on disk
                 }
-                return database;
-            } // Getter for 'database' object
+                return db;
+            } // Getter for 'db' object
         }
 
         public App()

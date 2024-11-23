@@ -15,7 +15,7 @@ namespace Fitness_Appv2.Views
         }
         public async void DisplayBodyweightAsync()
         {
-            var userdata = await App.Database.GetLatestUserDataAsync();
+            var userdata = await App.Db.GetLatestUserDataAsync();
             if (userdata != null)
             {
                 BodyweightDisplay.Text = "Current Bodyweight: \n" + userdata.BodyweightAttribute;
@@ -30,18 +30,18 @@ namespace Fitness_Appv2.Views
         {
             float bodyweight = Convert.ToSingle(BodyweightInput.Text);
             if (bodyweight > 0) { 
-                var userdata = await App.Database.GetLatestUserDataAsync();
+                var userdata = await App.Db.GetLatestUserDataAsync();
                 if (userdata != null)
                 {
                     float consistency = userdata.ConsistencyAttribute;
-                    await App.Database.SaveUserData(new UserDataTable { 
+                    await App.Db.SaveUserData(new UserDataTable { 
                         BodyweightAttribute = bodyweight,
                         ConsistencyAttribute = consistency,
                         DateAttribute = DateTime.Today
                         });
                 }
                 else {
-                    await App.Database.SaveUserData(new UserDataTable {
+                    await App.Db.SaveUserData(new UserDataTable {
                         BodyweightAttribute = bodyweight,
                         ConsistencyAttribute = 0,
                         DateAttribute = DateTime.Today});

@@ -7,13 +7,13 @@ using Xamarin.Forms;
 
 namespace Fitness_Appv2.ViewModels
 {
-    public class DefineNewRoutineViewModel : BaseViewModel
+    public class EditRoutineViewModel : BaseViewModel
     {
-        public DefineNewRoutineViewModel()
+        public EditRoutineViewModel()
         {
             {
-                Title = "Define New Routine";
-                }
+                Title = "Edit Routine";
             }
         }
     }
+}
