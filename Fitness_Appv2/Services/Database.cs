@@ -64,10 +64,8 @@ namespace Fitness_Appv2.Services
                 {
                     DateTime oldestEntry = daysEnum.ToList()[0];
 
-                    if (oldestEntry.Month != DateTime.Now.Month)
-                    {
-                        int monthsDiff = startOfThisMonth.Month - oldestEntry.Month + ((startOfThisMonth.Year - oldestEntry.Year) * 12);
-                        IEnumerable<DateTime> monthsList = Enumerable.Range(0, monthsDiff).Select(x => new DateTime(oldestEntry.AddMonths(x).Year, oldestEntry.AddMonths(x).Month, 1));
+                    List<DateTime> monthsList = monthlyData.Select(obj => obj.DateAttribute).Distinct().ToList();
+                    // generates list of months between the 
                         foreach (DateTime month in monthsList)
                         {
                             DateTime LB = month;
