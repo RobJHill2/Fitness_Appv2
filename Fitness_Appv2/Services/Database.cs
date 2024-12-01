@@ -1,9 +1,11 @@
 ﻿using Fitness_Appv2.Views;
 using SQLite;
+using Syncfusion.SfChart.XForms;
 using Syncfusion.XForms.TextInputLayout;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Linq;
@@ -20,85 +22,114 @@ namespace Fitness_Appv2.Services
         public Database(string DbPath) // Db class constructor
         {
             _DbCon = new SQLiteAsyncConnection(DbPath);
-            _DbCon.CreateTableAsync<SetsTable>(); // Creates SetsTable on startup
+            _DbCon.CreateTableAsync<PendingSetsTable>(); // Creates PendingSetsTable on startup
             _DbCon.CreateTableAsync<SetMediansTable>();
+            _DbCon.CreateTableAsync<DailyMediansTable>();
+            _DbCon.CreateTableAsync<MonthlyMediansTable>();
             _DbCon.CreateTableAsync<XcisesTable>();
             _DbCon.CreateTableAsync<UserDataTable>();
             _DbCon.CreateTableAsync<RoutineComponentsTable>();
             _DbCon.CreateTableAsync<RoutinesTable>();
-            MaintainSetsDataAsync();
+            MaintainDBAsync();
         }
-        private async void MaintainSetsDataAsync()
+        private async void MaintainDBAsync()
         {
+            // **** TESTING ****
+            // **** TESTING ****
 
-            DateTime startOfThisMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            DateTime startOfThisMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
 
-            IEnumerable<int> XcisesList = (await GetXciseIdsAsync()).Select(obj => obj.Id);
-            foreach (int Xcise in XcisesList) {
+            List<int> XcisesList = (await GetXciseIdsAsync()).Select(obj => obj.Id).ToList();
+            foreach (int Xcise in XcisesList)
+            {
+                List<PendingSetsTable> data = await _DbCon.QueryAsync<PendingSetsTable>("SELECT E1RMaxAttribute, DateAttribute FROM PendingSetsTable WHERE XciseIdAttribute = ? AND DateAttribute <> ? ORDER BY DateAttribute ASC;", Xcise, DateTime.Today);
 
                 // Storing Daily Median
-                List<DateTime> daysList = (await _DbCon.QueryAsync<SetsTable>("SELECT DISTINCT DateAttribute FROM SetsTable WHERE XciseIdAttribute = ? AND DateAttribute >= ? AND DateAttribute <> ? AND DailyMedianTaken = FALSE ORDER BY DateAttribute ASC;", Xcise, startOfThisMonth, DateTime.Today)).Select(obj => obj.DateAttribute).ToList();
-
-                if (daysList.Count() != 0)
+                List<PendingSetsTable> dailyData = data.Where(obj => obj.DailyMedianTaken = false).ToList();
+                if (dailyData.Count() != 0)
                 {
+                    List<DateTime> daysList = dailyData.Select(obj => obj.DateAttribute).Distinct().ToList();
                     foreach (DateTime day in daysList)
                     {
-                        List<float> data = (await _DbCon.QueryAsync<SetsTable>("SELECT E1RMaxAttribute FROM SetsTable WHERE XciseIdAttribute = ? AND DateAttribute = ? AND DailyMedianTaken = FALSE;", Xcise, day)).Select(obj => obj.E1RMaxAttribute).ToList();
-                        int len = data.Count;
+                        List<float> E1RMaxes = dailyData.Where(obj => obj.DateAttribute == day).Select(obj => obj.E1RMaxAttribute).ToList();
+                        E1RMaxes.Sort();
+                        int len = E1RMaxes.Count;
                         float e1RMaxMedian;
-                        if (len % 2 == 0) { e1RMaxMedian = (data[(len / 2) - 1] + data[len / 2]) / 2; } else { e1RMaxMedian = data[(len - 1) / 2]; }
-                        Debug.WriteLine("Daily Median Inserted");
-                        await _DbCon.InsertAsync(new SetMediansTable
+                        if (len % 2 == 0) { e1RMaxMedian = (E1RMaxes[(len / 2) - 1] + E1RMaxes[len / 2]) / 2; } else { e1RMaxMedian = E1RMaxes[(len - 1) / 2]; }
+                        await _DbCon.InsertAsync(new DailyMediansTable
                         {
                             XciseIdAttribute = Xcise,
                             DateAttribute = day,
-                            E1RMaxAttribute = e1RMaxMedian,
-                            IsDailyMedian = true,
+                            E1RMaxAttribute = e1RMaxMedian
                         });
                     }
                 }
 
                 // Storing Monthly Median
-                IEnumerable<DateTime> daysEnum = (await _DbCon.QueryAsync<SetsTable>("SELECT DateAttribute FROM SetsTable WHERE XciseIdAttribute = ? ORDER BY DateAttribute ASC;", Xcise)).Select(obj => obj.DateAttribute).ToList(); ;
-                if (daysEnum.Count() != 0)
+                List<PendingSetsTable> monthlyData = data.Where(obj => obj.DateAttribute < startOfThisMonth).ToList();
+                if (monthlyData.Count() != 0)
                 {
-                    DateTime oldestEntry = daysEnum.ToList()[0];
+                    DateTime oldestEntry = monthlyData.ToList()[0].DateAttribute;
 
-                    if (oldestEntry.Month != DateTime.Now.Month)
+                    int monthsDiff = DateTime.Today.Month - oldestEntry.Month + (DateTime.Today.Year - oldestEntry.Year)*12;
+                    List<DateTime> monthsList = Enumerable.Range(0, monthsDiff).Select(x => new DateTime(oldestEntry.AddMonths(x).Year, oldestEntry.AddMonths(x).Month, 1)).ToList();
+                    // generates list of months between the month of the oldest Entry and this month
+                    foreach (DateTime month in monthsList)
                     {
-                        int monthsDiff = startOfThisMonth.Month - oldestEntry.Month + ((startOfThisMonth.Year - oldestEntry.Year) * 12);
-                        IEnumerable<DateTime> monthsList = Enumerable.Range(0, monthsDiff).Select(x => new DateTime(oldestEntry.AddMonths(x).Year, oldestEntry.AddMonths(x).Month, 1));
-                        foreach (DateTime month in monthsList)
+                        DateTime LB = month;
+                        DateTime UB = LB.AddMonths(1);
+                        List<float> E1RMaxes = monthlyData.Where(obj => obj.DateAttribute >= LB && obj.DateAttribute < UB).Select(obj => obj.E1RMaxAttribute).ToList();
+                        E1RMaxes.Sort();                            
+                        int len = E1RMaxes.Count;
+                        float e1RMaxMedian;
+                        if (len % 2 == 0) { e1RMaxMedian = (E1RMaxes[(len / 2) - 1] + E1RMaxes[len / 2]) / 2; } else { e1RMaxMedian = E1RMaxes[(len - 1) / 2]; }
+                        await _DbCon.InsertAsync(new MonthlyMediansTable
                         {
-                            DateTime LB = month;
-                            DateTime UB = LB.AddMonths(1);
-                            List<float> data = (await _DbCon.QueryAsync<SetsTable>("SELECT E1RMaxAttribute FROM SetsTable WHERE XciseIdAttribute = ? AND DateAttribute >= ? AND DateAttribute < ? ORDER BY E1RMaxAttribute ASC;", Xcise, LB, UB)).Select(item => item.E1RMaxAttribute).ToList();
-                            if (data != null)
-                            {
-                                int len = data.Count;
-                                float e1RMaxMedian;
-                                if (len % 2 == 0) { e1RMaxMedian = (data[len / 2] + data[(len / 2) + 1]) / 2; } else { e1RMaxMedian = data[(len - 1) / 2]; }
-                                await _DbCon.InsertAsync(new SetMediansTable
-                                {
-                                    XciseIdAttribute = Xcise,
-                                    DateAttribute = LB,
-                                    E1RMaxAttribute = data[(data.Count - 1) / 2],
-                                    IsDailyMedian = false,
-                                });
-                            }
-                        }
+                            XciseIdAttribute = Xcise,
+                            DateAttribute = month,
+                            E1RMaxAttribute = e1RMaxMedian
+                        });
+                        GenerateGoal(Xcise); // Latest Monthly Median Changing --> new Goals
                     }
                 }
             }
-            await _DbCon.QueryAsync<SetsTable>("UPDATE SetsTable SET DailyMedianTaken = TRUE WHERE DateAttribute >= ? AND DateAttribute < ?;", startOfThisMonth, DateTime.Today);
-            await _DbCon.QueryAsync<SetsTable>("DELETE FROM SetsTable WHERE DateAttribute < ?;", startOfThisMonth);
+            await _DbCon.QueryAsync<PendingSetsTable>("UPDATE PendingSetsTable SET DailyMedianTaken = TRUE WHERE DailyMedianTaken = FALSE;");
+            await _DbCon.QueryAsync<PendingSetsTable>("DELETE FROM PendingSetsTable WHERE DateAttribute < ?;", startOfThisMonth);
+            await _DbCon.QueryAsync<DailyMediansTable>("DELETE FROM DailyMediansTable WHERE DateAttribute < ?;", startOfThisMonth);
         }
+        public async void GenerateGoal(int Xcise)
+        {
+            const int NumPoints = 3; // how many months the regression backdates uses  
+            const int GoalLength = 3; // how many months ahead the goal is predicting (3 means in 3 +- 0.5 months depending on the day)  
+            List<SetMediansTable> monthMedians = await GetXciseMonthlyMediansAsync(Xcise);
+            if (monthMedians.Count() >= NumPoints)
+            {
+                List<(int t, float e1RM)> datapoints = new List<(int, float)> { };
+                for (int i = 1 - NumPoints; i <= 0; i++)
+                {
+                    datapoints.Add((i, monthMedians[monthMedians.Count() - 1 + i].E1RMaxAttribute));
+                } // adds the last n monthMedians to datapoints
+                int tSum = datapoints.Select(x => x.t).Sum();
+                int t2Sum = Convert.ToInt16(datapoints.Select(x => Math.Pow(x.t, 2)).Sum());
+                float e1RMSum = datapoints.Select(x => x.e1RM).Sum();
+                float te1RMSum = datapoints.Select(x => x.t * x.e1RM).Sum();
 
-        public async Task<List<SetsTable>> GetSetsDataAsync()
+                float gradient = ((NumPoints * te1RMSum) - (tSum * e1RMSum)) / ((NumPoints * t2Sum) - Convert.ToInt16(Math.Pow(tSum, 2))); // regression formula
+                // linear regression formula: gradient = (n∑xy - ∑x*∑y) / (n∑x^2 - (∑x)^2)
+                float goal;
+                if (gradient > 0) { goal = datapoints.Last().e1RM + gradient * (GoalLength+1); }
+                else { goal = datapoints.Last().e1RM; }
+
+                await _DbCon.QueryAsync<XcisesTable>("UPDATE XcisesTable SET GoalAttribute = ? WHERE Id = ?;", goal, Xcise);           
+            }
+        }
+            
+
+        public async Task<List<PendingSetsTable>> GetPendingSets()
         {
             try
             {
-                return await _DbCon.Table<SetsTable>().ToListAsync(); //returns db as list
+                return await _DbCon.Table<PendingSetsTable>().ToListAsync(); //returns db as list
             }
             catch
             {
@@ -129,38 +160,56 @@ namespace Fitness_Appv2.Services
             }
         }
 
-        public Task<int> SaveSets(SetsTable saveData) //stores SetsTable object (aka a record from SetsTable class) in table, returns new PK
+        public async void SaveSets(PendingSetsTable saveData) //stores PendingSetsTable object (aka a record from PendingSetsTable class) in table, returns new PK
         {
-            return _DbCon.InsertAsync(saveData);
+            float currPB = (await _DbCon.QueryAsync<XcisesTable>("SELECT PBAttribute FROM XcisesTable WHERE Id = ?;", saveData.XciseIdAttribute))[0].PBAttribute;
+            if (saveData.E1RMaxAttribute > currPB)
+            {
+                await _DbCon.QueryAsync<XcisesTable>("UPDATE XcisesTable SET PBAttribute = ? WHERE Id = ?;", saveData.E1RMaxAttribute, saveData.XciseIdAttribute);
+            }
+
+            await _DbCon.InsertAsync(saveData);
         }
-        public Task<int> SaveXcise(XcisesTable saveData)
+        public void SaveXcise(XcisesTable saveData)
         {
-            return _DbCon.InsertAsync(saveData);
+            _DbCon.InsertAsync(saveData);
         }
-        public Task<int> SaveUserData(UserDataTable saveData)
+        public void SaveUserData(UserDataTable saveData)
         {
-            return _DbCon.InsertAsync(saveData);
+            _DbCon.InsertAsync(saveData);
         }
-        public Task<int> SaveRoutineComponent(RoutineComponentsTable saveData)
+        public void SaveRoutineComponent(RoutineComponentsTable saveData)
         {
-            return _DbCon.InsertAsync(saveData);
+            _DbCon.InsertAsync(saveData);
         }
-        public Task<int> SaveRoutine(RoutinesTable saveData) 
+        public void SaveRoutine(RoutinesTable saveData) 
         {
-            return _DbCon.InsertAsync(saveData);
+            _DbCon.InsertAsync(saveData);
         }
 
-        public async Task<List<SetMediansTable>> GetXciseMediansAsync(int XciseId)
+        public async Task<List<SetMediansTable>> GetXciseDailyMediansAsync(int XciseId)
         {
             try
             {
-                return await _DbCon.QueryAsync<SetMediansTable>("SELECT E1RMaxAttribute, DateAttribute FROM SetMediansTable WHERE XciseIdAttribute = ? ORDER BY DateAttribute ASC;", XciseId);
+                return await _DbCon.QueryAsync<SetMediansTable>("SELECT E1RMaxAttribute, DateAttribute FROM DailyMediansTable WHERE XciseIdAttribute = ? ORDER BY DateAttribute ASC;", XciseId);
             }
             catch
             {
                 return null;
             }
         }
+        public async Task<List<SetMediansTable>> GetXciseMonthlyMediansAsync(int XciseId)
+        {
+            try
+            {
+                return await _DbCon.QueryAsync<SetMediansTable>("SELECT E1RMaxAttribute, DateAttribute FROM MonthlyMediansTable WHERE XciseIdAttribute = ? ORDER BY DateAttribute ASC;", XciseId);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public async Task<List<XcisesTable>> GetXciseIdsAsync()
         {
             try
@@ -175,16 +224,11 @@ namespace Fitness_Appv2.Services
 
         public async Task<List<XcisesTable>> GetXciseNamesAsync()
         {
-            try
-            {
-                return (await _DbCon.QueryAsync<XcisesTable>("SELECT Id, XciseNameAttribute FROM XcisesTable;")).ToList();
-            }
-            catch
-            {
-                return null;
-            }
+
+            return (await _DbCon.QueryAsync<XcisesTable>("SELECT Id, XciseNameAttribute FROM XcisesTable;"));
+        
         }
-        public async Task<bool> GetIsBodyweightXcise(int Id)
+        public async Task<bool> GetIsBodyweightXciseAsync(int Id)
         {
             return (await _DbCon.QueryAsync<XcisesTable>("SELECT IsBodyweightAttribute FROM XcisesTable WHERE Id = ?;", Id))[0].IsBodyweightAttribute;  
         }
@@ -192,8 +236,18 @@ namespace Fitness_Appv2.Services
         {
             try
             {
-                List<UserDataTable> UserDataList = (await _DbCon.QueryAsync<UserDataTable>("SELECT * FROM UserDataTable;"));
-                return UserDataList.Last();
+                return (await _DbCon.QueryAsync<UserDataTable>("SELECT * FROM UserDataTable;")).Last();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        public async Task<List<UserDataTable>> TestUserData()
+        {
+            try
+            {
+                return new List<UserDataTable> { new UserDataTable { BodyweightAttribute = 76} };
             }
             catch
             {
@@ -237,9 +291,9 @@ namespace Fitness_Appv2.Services
             return _DbCon.QueryAsync<RoutinesTable>("DELETE FROM RoutinesTable WHERE Id = ?;", Id);
         }
         
-        public Task<List<SetMediansTable>> CustomMethod()
+        public Task<List<DailyMediansTable>> CustomMethod()
         {
-            return _DbCon.QueryAsync<SetMediansTable>("DELETE FROM RoutineComponentsTable;");
+            return _DbCon.QueryAsync<DailyMediansTable>("DELETE FROM RoutineComponentsTable;");
         }
     }
 } 

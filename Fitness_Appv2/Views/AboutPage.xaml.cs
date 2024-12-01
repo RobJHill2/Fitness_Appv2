@@ -1,8 +1,11 @@
 ﻿using Fitness_Appv2.Services;
 using System;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace Fitness_Appv2.Views
 {
@@ -12,10 +15,11 @@ namespace Fitness_Appv2.Views
         {
             InitializeComponent();
             DisplayBodyweightAsync();
-        }
+        }  
+        
         public async void DisplayBodyweightAsync()
         {
-            var userdata = await App.Db.GetLatestUserDataAsync();
+            var userdata = (await App.Db.TestUserData())[0];
             if (userdata != null)
             {
                 BodyweightDisplay.Text = "Current Bodyweight: \n" + userdata.BodyweightAttribute;
@@ -30,25 +34,24 @@ namespace Fitness_Appv2.Views
         {
             float bodyweight = Convert.ToSingle(BodyweightInput.Text);
             if (bodyweight > 0) { 
-                var userdata = await App.Db.GetLatestUserDataAsync();
+                var userdata = await App.Db.GetLatestUserDataAsync() ;
                 if (userdata != null)
                 {
                     float consistency = userdata.ConsistencyAttribute;
-                    await App.Db.SaveUserData(new UserDataTable { 
+                    App.Db.SaveUserData(new UserDataTable { 
                         BodyweightAttribute = bodyweight,
                         ConsistencyAttribute = consistency,
                         DateAttribute = DateTime.Today
                         });
                 }
                 else {
-                    await App.Db.SaveUserData(new UserDataTable {
+                    App.Db.SaveUserData(new UserDataTable {
                         BodyweightAttribute = bodyweight,
                         ConsistencyAttribute = 0,
                         DateAttribute = DateTime.Today});
                 }
                 BodyweightInput.Text = "";
                 DisplayBodyweightAsync();
-
             }
         }
     }

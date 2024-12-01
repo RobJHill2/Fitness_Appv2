@@ -11,7 +11,6 @@ namespace Fitness_Appv2.Services
         public int XciseIdAttribute { get; set; }
         public DateTime DateAttribute { get; set; }
         public float E1RMaxAttribute { get; set; }
-        public bool IsDailyMedian { get; set; }
     }
 }
 

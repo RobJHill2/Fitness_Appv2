@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Fitness_Appv2.Views.AddSets">
     <StackLayout>
-        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*,Auto">
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto">
             <Picker x:Name="xcisePicker" 
                     Title="Select Exercise"
                     ItemDisplayBinding="{Binding XciseNameAttribute}"
@@ -11,9 +11,8 @@
             <Entry x:Name="repsInput" Placeholder="Input Reps" Keyboard="Numeric" Grid.Row="1"/>
             <Entry x:Name="weightInput" Placeholder="Input Weight" Keyboard="Numeric" Grid.Row="2"/>
             <Button x:Name="submitSet" Text="Submit Set" Clicked="SubmitSet_ClickedAsync" Grid.Row="3"/>
-            <Button x:Name="clearInputs" Text="Clear Inputs" Clicked="ClearInputs_Clicked" Grid.Row="4"/>
-            <Label x:Name="inputObjection" IsVisible="False" Grid.Row="5"/>
-            <CollectionView x:Name="DataView" Grid.Row="6" BackgroundColor="White">
+            <Label x:Name="inputObjection" IsVisible="False" Grid.Row="4"/>
+            <CollectionView x:Name="DataView" BackgroundColor="White" Grid.Row="5" >
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <StackLayout>
@@ -34,11 +33,7 @@
                                     TextColor="Black"
                                     FontSize="Medium"/>
                             <Label Text="DailyMedianTaken"/>
-                                <Label Text="{Binding DailyMedianTaken}"
-                                    TextColor="Black"
-                                    FontSize="Medium"/>
-                            <Label Text="IsDailyMedian"/>
-                                <Label Text="{Binding IsDailyMedian}"
+                            <Label Text="{Binding DailyMedianTaken}"
                                     TextColor="Black"
                                     FontSize="Medium"/>
                             <Label Text="------------------------------------" FontSize="Medium" TextColor="Black"/>
@@ -47,7 +42,7 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
-            <Button x:Name="tempButton" Text = "Custom Button" Clicked="TempButton_Clicked" Grid.Row="7"/>
+            <Button x:Name="tempButton" Text = "Custom Button" Clicked="TempButton_Clicked" IsVisible ="False" Grid.Row="6"/>
         </Grid>
     </StackLayout>
 </ContentPage>

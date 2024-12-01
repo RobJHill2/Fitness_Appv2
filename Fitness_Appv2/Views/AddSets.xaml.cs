@@ -20,13 +20,14 @@ namespace Fitness_Appv2.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            DataView.ItemsSource = await App.Db.GetSetsDataAsync();
+            DataView.ItemsSource = await App.Db.GetPendingSets();
             xcisePicker.ItemsSource = await App.Db.GetXciseNamesAsync();
         }
         private async void SubmitSet_ClickedAsync(object sender, EventArgs e)
         {
             if (((Button)sender).Text == "Submit Set") // this is to prevent double clicks registering twice
             {
+                ((Button)sender).Text = "Submitting ...";
                 inputObjection.IsVisible = false;
                 XcisesTable item = xcisePicker.SelectedItem as XcisesTable;
                 int xciseId = item.Id; // record Index instead?
@@ -49,26 +50,26 @@ namespace Fitness_Appv2.Views
                         return;
                     }
                 }
-                DateTime date = DateTime.Today;
-                System.Diagnostics.Debug.WriteLine("Clicked: xcise = {0}; reps = {1}; weight = {2}", xciseId, reps, weight);
+                
                 if ((reps > 0) && (weight > 0 | item.IsBodyweightAttribute)) //sanitisation
                 {
-                    ((Button)sender).Text = "Submitted";
+                    DateTime date = DateTime.Today;
                     float e1RMax;
                     if ( 1 <= reps && reps < 7.614) { e1RMax = weight * 36 / (37 - reps); }
                                                else { e1RMax = weight * Convert.ToSingle(Math.Pow(reps, 0.1)); }
                     // 1RM = w * (36/(37-r)) is the Brzyki Formula. It is more accurate* for 1 <= r < 7.614
                     // 1RM = w * r^0.1 is the Lombardi Formula. It is more accurate* for r < 1 U r >= 7.614
                     // 7.614 and 1 are the intersections between the graphs, chosen as these ranges match my research.
-                    await App.Db.SaveSets(new SetsTable
+                    App.Db.SaveSets(new PendingSetsTable
                     {
                         XciseIdAttribute = xciseId,
                         DateAttribute = date,
                         E1RMaxAttribute = e1RMax,
                         DailyMedianTaken = false,
                     }); // passes record obj into save method
-                    DataView.ItemsSource = await App.Db.GetSetsDataAsync();
-                    
+                    DataView.ItemsSource = await App.Db.GetPendingSets();
+                    repsInput.Text = weightInput.Text = "";
+                    xcisePicker.SelectedIndex = -1;
                     await Task.Delay(1500);
                     ((Button)sender).Text = "Submit Set";
                 }
@@ -79,15 +80,12 @@ namespace Fitness_Appv2.Views
                 }
             }
         }
-        private void ClearInputs_Clicked(object sender, EventArgs e)
-        {
-            repsInput.Text = weightInput.Text = "";
-        }
+
         private async void TempButton_Clicked(object sender, EventArgs e)
         {
             // currently deletes all Routines
             await App.Db.CustomMethod();
-            DataView.ItemsSource = await App.Db.GetSetsDataAsync();
+            DataView.ItemsSource = await App.Db.GetPendingSets();
         }
     }
 }

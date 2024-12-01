@@ -26,11 +26,11 @@ namespace Fitness_Appv2.Views
             {
                 string name = xciseNameInput.Text;
                 bool isBodyweight = isBodyweightInput.IsChecked;
-                IEnumerable<string> existingXcises = (await App.Db.GetXciseNamesAsync()).Select(obj => obj.XciseNameAttribute);
+                List<string> existingXcises = (await App.Db.GetXciseNamesAsync()).Select(obj => obj.XciseNameAttribute).ToList();
                 if (!string.IsNullOrEmpty(name) && !existingXcises.Contains(name))
                 {
                     submitXcise.Text = "Submitted";
-                    await App.Db.SaveXcise(new XcisesTable
+                    App.Db.SaveXcise(new XcisesTable
                     {
                         XciseNameAttribute = name,
                         IsBodyweightAttribute = isBodyweight,
