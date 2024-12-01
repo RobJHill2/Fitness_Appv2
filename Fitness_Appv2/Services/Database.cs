@@ -9,6 +9,7 @@ using System.Data;
 using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -71,7 +72,7 @@ namespace Fitness_Appv2.Services
                 {
                     DateTime oldestEntry = monthlyData.ToList()[0].DateAttribute;
 
-                    int monthsDiff = DateTime.Today.Month - oldestEntry.Month + (DateTime.Today.Year - oldestEntry.Year)*12;
+                    int monthsDiff = DateTime.Today.Month - oldestEntry.Month + (DateTime.Today.Year - oldestEntry.Year) * 12;
                     List<DateTime> monthsList = Enumerable.Range(0, monthsDiff).Select(x => new DateTime(oldestEntry.AddMonths(x).Year, oldestEntry.AddMonths(x).Month, 1)).ToList();
                     // generates list of months between the month of the oldest Entry and this month
                     foreach (DateTime month in monthsList)
@@ -79,7 +80,7 @@ namespace Fitness_Appv2.Services
                         DateTime LB = month;
                         DateTime UB = LB.AddMonths(1);
                         List<float> E1RMaxes = monthlyData.Where(obj => obj.DateAttribute >= LB && obj.DateAttribute < UB).Select(obj => obj.E1RMaxAttribute).ToList();
-                        E1RMaxes.Sort();                            
+                        E1RMaxes.Sort();
                         int len = E1RMaxes.Count;
                         float e1RMaxMedian;
                         if (len % 2 == 0) { e1RMaxMedian = (E1RMaxes[(len / 2) - 1] + E1RMaxes[len / 2]) / 2; } else { e1RMaxMedian = E1RMaxes[(len - 1) / 2]; }
@@ -117,13 +118,13 @@ namespace Fitness_Appv2.Services
                 float gradient = ((NumPoints * te1RMSum) - (tSum * e1RMSum)) / ((NumPoints * t2Sum) - Convert.ToInt16(Math.Pow(tSum, 2))); // regression formula
                 // linear regression formula: gradient = (n∑xy - ∑x*∑y) / (n∑x^2 - (∑x)^2)
                 float goal;
-                if (gradient > 0) { goal = datapoints.Last().e1RM + gradient * (GoalLength+1); }
+                if (gradient > 0) { goal = datapoints.Last().e1RM + gradient * (GoalLength + 1); }
                 else { goal = datapoints.Last().e1RM; }
 
-                await _DbCon.QueryAsync<XcisesTable>("UPDATE XcisesTable SET GoalAttribute = ? WHERE Id = ?;", goal, Xcise);           
+                await _DbCon.QueryAsync<XcisesTable>("UPDATE XcisesTable SET GoalAttribute = ? WHERE Id = ?;", goal, Xcise);
             }
         }
-            
+
 
         public async Task<List<PendingSetsTable>> GetPendingSets()
         {
@@ -224,9 +225,14 @@ namespace Fitness_Appv2.Services
 
         public async Task<List<XcisesTable>> GetXciseNamesAsync()
         {
-
-            return (await _DbCon.QueryAsync<XcisesTable>("SELECT Id, XciseNameAttribute FROM XcisesTable;"));
-        
+            try
+            {
+                return (await _DbCon.QueryAsync<XcisesTable>("SELECT Id, XciseNameAttribute FROM XcisesTable;"));
+            }
+            catch 
+            {
+                return null;
+            }
         }
         public async Task<bool> GetIsBodyweightXciseAsync(int Id)
         {
