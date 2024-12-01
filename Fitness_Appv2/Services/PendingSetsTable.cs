@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Fitness_Appv2.Services
 {
-    public class SetsTable { 
+    public class PendingSetsTable { 
 
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
@@ -13,7 +13,7 @@ namespace Fitness_Appv2.Services
         public int XciseIdAttribute { get; set; } // FOREIGN KEY
         public DateTime DateAttribute { get; set; }
         public float E1RMaxAttribute { get; set; }
-        public bool DailyMedianTaken { get; set; }
+        public bool DailyMedianTaken { get; set; } // need this since record needs to be kept after daily median taken
     }
 }
 

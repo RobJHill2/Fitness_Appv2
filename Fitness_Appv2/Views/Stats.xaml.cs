@@ -24,8 +24,11 @@ namespace Fitness_Appv2.Views
         }
         private async void Picker_ChangedAsync(object sender, EventArgs e) 
         {
-            XcisesTable item = picker.SelectedItem as XcisesTable; // casting from 'object' type to 'SetsTable' so can access attributes
-            chartSeries.ItemsSource = await App.Db.GetXciseMediansAsync(item.Id);
+            XcisesTable item = picker.SelectedItem as XcisesTable; // casting from 'object' type to 'PendingSetsTable' so can access attributes
+            List<SetMediansTable> source = new List<SetMediansTable>();
+            source.AddRange(await App.Db.GetXciseDailyMediansAsync(item.Id));
+            source.AddRange(await App.Db.GetXciseMonthlyMediansAsync(item.Id));
+            chartSeries.ItemsSource = source;
         }
     }
 }

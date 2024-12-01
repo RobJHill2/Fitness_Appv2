@@ -149,7 +149,7 @@ namespace Fitness_Appv2.Views
             // sanitisation
             foreach (LogRoutineDataModel component in activeComponents)
             {
-                bool isBodyweight = await App.Db.GetIsBodyweightXcise(component.XciseId);
+                bool isBodyweight = await App.Db.GetIsBodyweightXciseAsync(component.XciseId);
                 UserDataTable userdata = await App.Db.GetLatestUserDataAsync();
                 if (isBodyweight && userdata == null)
                 {
@@ -178,7 +178,7 @@ namespace Fitness_Appv2.Views
             // log sets
             foreach (LogRoutineDataModel component in activeComponents)
             {
-                bool isBodyweight = await App.Db.GetIsBodyweightXcise(component.XciseId);
+                bool isBodyweight = await App.Db.GetIsBodyweightXciseAsync(component.XciseId);
                 UserDataTable userdata = await App.Db.GetLatestUserDataAsync();
                 foreach (SetLogDataModel set in component.SetsList)
                 {
@@ -190,7 +190,7 @@ namespace Fitness_Appv2.Views
                     if (1 <= set.Reps && set.Reps < 7.614) { e1RMax = weight * 36 / (37 - set.Reps); }
                     else { e1RMax = weight * Convert.ToSingle(Math.Pow(set.Reps, 0.1)); }
 
-                    await App.Db.SaveSets(new SetsTable
+                    App.Db.SaveSets(new PendingSetsTable
                     {
                         XciseIdAttribute = component.XciseId,
                         DateAttribute = date,

@@ -104,7 +104,7 @@ namespace Fitness_Appv2.Views
 
             if (RoutineId == 0) // i.e. if Routine is new 
             {
-                await App.Db.SaveRoutine(new RoutinesTable { NameAttribute = RoutineName.Text });
+                App.Db.SaveRoutine(new RoutinesTable { NameAttribute = RoutineName.Text });
                 List<RoutinesTable> routines = await App.Db.GetRoutinesAsync();
                 RoutineId = routines.Last().Id;
             }
@@ -117,7 +117,7 @@ namespace Fitness_Appv2.Views
             {
                 component.Id = 0; // reset to 0 so autoIncrement is triggered (autoIncrement starts from 1)
                 component.RoutineAttribute = RoutineId;
-                await App.Db.SaveRoutineComponent(component);
+                App.Db.SaveRoutineComponent(component);
             }
             await Navigation.PopAsync();
 
