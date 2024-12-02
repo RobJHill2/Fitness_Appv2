@@ -242,18 +242,7 @@ namespace Fitness_Appv2.Services
         {
             try
             {
-                return (await _DbCon.QueryAsync<UserDataTable>("SELECT * FROM UserDataTable;")).Last();
-            }
-            catch
-            {
-                return null;
-            }
-        }
-        public async Task<List<UserDataTable>> TestUserData()
-        {
-            try
-            {
-                return new List<UserDataTable> { new UserDataTable { BodyweightAttribute = 76} };
+                return (await _DbCon.QueryAsync<UserDataTable>("SELECT * FROM UserDataTable ORDER BY DateAttribute DESC;"))[0];
             }
             catch
             {

@@ -19,7 +19,7 @@ namespace Fitness_Appv2.Views
         
         public async void DisplayBodyweightAsync()
         {
-            var userdata = (await App.Db.TestUserData())[0];
+            var userdata = await App.Db.GetLatestUserDataAsync();
             if (userdata != null)
             {
                 BodyweightDisplay.Text = "Current Bodyweight: \n" + userdata.BodyweightAttribute;
