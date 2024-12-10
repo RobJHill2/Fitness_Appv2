@@ -39,7 +39,7 @@ namespace Fitness_Appv2.Views
                 else
                 {
                     UserDataTable userdata = (await App.Db.GetLatestUserDataAsync());
-                    if (userdata != null)
+                    if (userdata != null && userdata.BodyweightAttribute != 0)
                     {
                         weight = (await App.Db.GetLatestUserDataAsync()).BodyweightAttribute + Convert.ToSingle(weightInput.Text);
                     } // If it is a bodyweight exercise, must add bodyweight to any additional weight
@@ -54,12 +54,7 @@ namespace Fitness_Appv2.Views
                 if ((reps > 0) && (weight > 0 | item.IsBodyweightAttribute)) //sanitisation
                 {
                     DateTime date = DateTime.Today;
-                    float e1RMax;
-                    if ( 1 <= reps && reps < 7.614) { e1RMax = weight * 36 / (37 - reps); }
-                                               else { e1RMax = weight * Convert.ToSingle(Math.Pow(reps, 0.1)); }
-                    // 1RM = w * (36/(37-r)) is the Brzyki Formula. It is more accurate* for 1 <= r < 7.614
-                    // 1RM = w * r^0.1 is the Lombardi Formula. It is more accurate* for r < 1 U r >= 7.614
-                    // 7.614 and 1 are the intersections between the graphs, chosen as these ranges match my research.
+                    float e1RMax = Utilities.GetE1RMax(reps, weight);
                     App.Db.SaveSets(new PendingSetsTable
                     {
                         XciseIdAttribute = xciseId,

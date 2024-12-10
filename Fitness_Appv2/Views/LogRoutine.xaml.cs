@@ -151,7 +151,7 @@ namespace Fitness_Appv2.Views
             {
                 bool isBodyweight = await App.Db.GetIsBodyweightXciseAsync(component.XciseId);
                 UserDataTable userdata = await App.Db.GetLatestUserDataAsync();
-                if (isBodyweight && userdata == null)
+                if (isBodyweight && (userdata == null || userdata.BodyweightAttribute == 0))
                 {
                     inputObjection.IsVisible = true;
                     inputObjection.Text = "Bodyweight Exercise Inputed. Please record your bodyweight on the home page first.";
@@ -185,10 +185,8 @@ namespace Fitness_Appv2.Views
                     float weight;
                     if (isBodyweight) { weight = set.Weight + userdata.BodyweightAttribute; }
                     else { weight = set.Weight; }
-
-                    float e1RMax;
-                    if (1 <= set.Reps && set.Reps < 7.614) { e1RMax = weight * 36 / (37 - set.Reps); }
-                    else { e1RMax = weight * Convert.ToSingle(Math.Pow(set.Reps, 0.1)); }
+                    float reps = set.Reps;
+                    float e1RMax = Utilities.GetE1RMax(reps, weight);
 
                     App.Db.SaveSets(new PendingSetsTable
                     {

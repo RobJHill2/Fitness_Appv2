@@ -13,6 +13,7 @@ namespace Fitness_Appv2.Services
         public bool IsBodyweightAttribute { get; set; }
         public float PBAttribute { get; set; }
         public float GoalAttribute { get; set; }
+        public bool IsPinnedAttribute { get; set; }
     }
 }
 

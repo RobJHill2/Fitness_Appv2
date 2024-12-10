@@ -38,8 +38,8 @@ namespace Fitness_Appv2.Views
 
         private async void DeleteRoutine_Clicked(object sender, EventArgs e)
         {
-            await App.Db.DeleteRoutineComponents(displayedRoutines[currRoutineIndex].Id);
-            await App.Db.DeleteRoutine(displayedRoutines[currRoutineIndex].Id);
+            App.Db.DeleteRoutineComponents(displayedRoutines[currRoutineIndex].Id);
+            App.Db.DeleteRoutine(displayedRoutines[currRoutineIndex].Id);
             displayedRoutines.RemoveAt(currRoutineIndex);
             RoutineOptions.IsVisible = false;
             RoutinesView.ItemsSource = null;

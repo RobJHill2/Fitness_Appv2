@@ -3,14 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Fitness_Appv2.Views.Xcises">
     <StackLayout>
-        <Grid RowDefinitions="Auto, Auto, Auto, *">
+        <Grid RowDefinitions="Auto, Auto, Auto, *, Auto">
             <Entry x:Name="xciseNameInput" Placeholder ="Input Exercise Name" Grid.Row="0"/>
             <Grid ColumnDefinitions="Auto, Auto" Grid.Row="1">
                 <Label Text="Bodyweight Exercise?" FontSize ="Medium" TextColor="Black" Grid.Column="0"/>
                 <CheckBox x:Name="isBodyweightInput" Grid.Column="1"/>
             </Grid>
             <Button x:Name="submitXcise" Text="Submit Exercise" Clicked="SubmitXcise_Clicked" Grid.Row="2"/>
-            <CollectionView x:Name="xcisesView" Grid.Row="3" BackgroundColor="White">
+            <CollectionView x:Name="xcisesView" Grid.Row="3" BackgroundColor="White" SelectionMode="Single" SelectionChanged="XcisesView_SelectionChanged">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <StackLayout>
@@ -34,11 +34,18 @@
                             <Label Text="{Binding PBAttribute}"
                                 TextColor="Black"
                                 FontSize="Medium"/>
+                            <Label Text="Pinned?"/>
+                            <Label Text="{Binding IsPinnedAttribute}"/>
                             <Label Text="------------------------------------" FontSize="Medium" TextColor="Black"/>
                         </StackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
+            <Grid x:Name="changeIsPinned" ColumnDefinitions="Auto, Auto" RowDefinitions="Auto, Auto" IsVisible="False" Grid.Row="4">
+                <Label Text="Pin? " Grid.Column="0" Grid.Row="0"/>
+                <CheckBox x:Name ="isPinnedInput" Grid.Column="1" Grid.Row="0"/>
+                <Button x:Name="submitIsPinned" Text="Save" Clicked="SubmitIsPinned_Clicked" Grid.Row="1"/>
+            </Grid>
         </Grid>
     </StackLayout>
 </ContentPage>

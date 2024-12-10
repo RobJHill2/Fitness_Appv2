@@ -12,6 +12,8 @@ namespace Fitness_Appv2.Views
 {
     public partial class Xcises : ContentPage
     {
+        List<XcisesTable> XcisesList;
+        int currComponentIndex;
         public Xcises()
         {
             InitializeComponent();
@@ -19,7 +21,8 @@ namespace Fitness_Appv2.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            xcisesView.ItemsSource = await App.Db.GetXcisesAsync();
+            XcisesList = await App.Db.GetXcisesAsync();
+            xcisesView.ItemsSource = XcisesList;
         }
         private async void SubmitXcise_Clicked(object sender, EventArgs e){
             if (((Button)sender).Text == "Submit Exercise")
@@ -42,6 +45,22 @@ namespace Fitness_Appv2.Views
                     submitXcise.Text = "Submit Exercise";
                 }
             }
+        }
+
+        private void XcisesView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            currComponentIndex = XcisesList.IndexOf(e.CurrentSelection[0] as XcisesTable);
+            isPinnedInput.IsChecked = XcisesList[currComponentIndex].IsPinnedAttribute;
+            changeIsPinned.IsVisible = true;
+        }
+
+        private async void SubmitIsPinned_Clicked(object sender, EventArgs e)
+        {
+            XcisesList[currComponentIndex].IsPinnedAttribute = isPinnedInput.IsChecked;    
+            App.Db.UpdateXciseIsPinnedAsync(XcisesList[currComponentIndex].IsPinnedAttribute, XcisesList[currComponentIndex].Id);
+            xcisesView.ItemsSource = null;
+            xcisesView.ItemsSource = XcisesList;
+            changeIsPinned.IsVisible = false;
         }
     }
 }

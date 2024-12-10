@@ -10,7 +10,7 @@ namespace Fitness_Appv2.Services
         public int Id { get; set; }
         public DateTime DateAttribute { get; set; }
         public float BodyweightAttribute { get; set; }
-        public float ConsistencyAttribute { get; set; }
+        public int WeeklyConsistencyAttribute { get; set; }
     }
 }
 
