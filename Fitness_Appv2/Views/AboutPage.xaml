@@ -15,20 +15,13 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,Auto,Auto,Auto, Auto, Auto, *">
+    <Grid RowDefinitions="Auto, Auto, Auto, *">
         <Label Text="Welcome" TextColor="Black" FontSize="30" Grid.Row="0"/>
-        
-        <Label x:Name="BodyweightDisplay" Grid.Row="1"/>
-        <Entry x:Name="BodyweightInput" Keyboard="Numeric" Placeholder="Input Bodyweight" Grid.Row="2"/>
-        <Button x:Name="BodyweightUpdate" Pressed="BodyweightUpdate_Pressed" Text="Update" Grid.Row="3"/>
 
-        <Label Text="Consistentcy Last Week: " Grid.Row="4"/>
-        <Label x:Name="ConsistencyDisplay" Grid.Row="5"/>
+        <Label x:Name="MotivationalQuote" Grid.Row="1"/>
 
-        <Label x:Name="MotivationalQuote" Grid.Row="6"/>
-
-        <Label Text="Pinned Exercises:" TextColor="Black" FontSize="20" Grid.Row="7"/>
-        <CollectionView x:Name="viewPinned" Grid.Row="8">
+        <Label Text="Pinned Exercises:" TextColor="Black" FontSize="20" Grid.Row="2"/>
+        <CollectionView x:Name="viewPinned" Grid.Row="3">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <StackLayout>

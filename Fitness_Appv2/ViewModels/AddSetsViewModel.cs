@@ -10,10 +10,8 @@ namespace Fitness_Appv2.ViewModels
     public class AddSetsViewModel : BaseViewModel
     {
         public AddSetsViewModel()
-        {
-            {
-                Title = "Add Sets";
-                }
-            }
+        { 
+                Title = "Add Sets";            
         }
     }
+}

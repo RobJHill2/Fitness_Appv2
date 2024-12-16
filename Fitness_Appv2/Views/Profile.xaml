@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Fitness_Appv2.Views.Profile"
+             xmlns:vm="clr-namespace:Fitness_Appv2.ViewModels"
+             Title="{Binding Title}">
+    
+    <ContentPage.BindingContext>
+        <vm:AboutViewModel />
+    </ContentPage.BindingContext>
+    
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Color x:Key="Accent">#96d1ff</Color>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto">
+
+        <Label x:Name="BodyweightDisplay" Grid.Row="0"/>
+        <Entry x:Name="BodyweightInput" Keyboard="Numeric" Placeholder="Input Bodyweight" Grid.Row="1"/>
+        <Button x:Name="BodyweightUpdate" Pressed="BodyweightUpdate_Pressed" Text="Update" Grid.Row="2"/>
+
+        <Label x:Name="ConsistencyDisplay" Grid.Row="4"/>
+
+        <Label x:Name="ConsistencyGoalDisplay" Grid.Row="5"/>
+        <Entry x:Name="ConsistencyGoalInput" Keyboard="Numeric" Placeholder="Input Consistency Goal" Grid.Row="6"/>
+        <Button x:Name="ConsistencyGoalUpdate" Pressed="ConsistencyGoalUpdate_Pressed" Text="Update" Grid.Row="7"/>
+    </Grid>
+</ContentPage>

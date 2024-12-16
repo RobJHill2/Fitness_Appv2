@@ -32,6 +32,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\Profile.xaml.cs">
+      <DependentUpon>Profile.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\LogRoutine.xaml.cs">
       <DependentUpon>LogRoutine.xaml</DependentUpon>
     </Compile>

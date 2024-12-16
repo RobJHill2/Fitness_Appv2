@@ -9,9 +9,11 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlTypes;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -25,7 +27,6 @@ namespace Fitness_Appv2.Services
         {
             _DbCon = new SQLiteAsyncConnection(DbPath);
             _DbCon.CreateTableAsync<PendingSetsTable>(); // Creates PendingSetsTable on startup
-            _DbCon.CreateTableAsync<SetMediansTable>();
             _DbCon.CreateTableAsync<DailyMediansTable>();
             _DbCon.CreateTableAsync<MonthlyMediansTable>();
             _DbCon.CreateTableAsync<XcisesTable>();
@@ -37,22 +38,23 @@ namespace Fitness_Appv2.Services
         private async void MaintainDBAsync()
         {
             // **** TESTING ****
-
+            
             // **** TESTING ****
 
             DateTime startOfThisMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+            List<PendingSetsTable> data = await _DbCon.QueryAsync<PendingSetsTable>("SELECT * FROM PendingSetsTable WHERE DateAttribute <> ? ORDER BY DateAttribute ASC;", DateTime.Today);
 
             List<int> XcisesList = (await GetXciseIdsAsync()).Select(obj => obj.Id).ToList();
             foreach (int Xcise in XcisesList)
             {
-                List<PendingSetsTable> data = await _DbCon.QueryAsync<PendingSetsTable>("SELECT E1RMaxAttribute, DateAttribute FROM PendingSetsTable WHERE XciseIdAttribute = ? AND DateAttribute <> ? ORDER BY DateAttribute ASC;", Xcise, DateTime.Today);
+                List<PendingSetsTable> xciseData = data.Where(obj => obj.XciseIdAttribute == Xcise).ToList();
 
                 // Storing Daily Median
-                List<PendingSetsTable> dailyData = data.Where(obj => obj.DailyMedianTaken = false).ToList();
-                int setsThisWeek = dailyData.Where(obj => obj.DateAttribute > Utilities.GetLastMonday(DateTime.Today)).Count();
-                if (setsThisWeek != 0)
+                List<PendingSetsTable> dailyData = xciseData.Where(obj => obj.DailyMedianTaken == false).ToList();
+
+                if (dailyData.Count() != 0)
                 {
-                    UpdateConsistency(setsThisWeek);
+                    UpdateWeeklyConsistency(dailyData);
                 }
 
                 if (dailyData.Count() != 0)
@@ -74,14 +76,10 @@ namespace Fitness_Appv2.Services
                 }
 
                 // Storing Monthly Median
-                List<PendingSetsTable> monthlyData = data.Where(obj => obj.DateAttribute < startOfThisMonth).ToList();
+                List<PendingSetsTable> monthlyData = xciseData.Where(obj => obj.DateAttribute < startOfThisMonth).ToList();
                 if (monthlyData.Count() != 0)
                 {
-                    DateTime oldestEntry = monthlyData.ToList()[0].DateAttribute;
-
-                    int monthsDiff = DateTime.Today.Month - oldestEntry.Month + (DateTime.Today.Year - oldestEntry.Year) * 12;
-                    List<DateTime> monthsList = Enumerable.Range(0, monthsDiff).Select(x => new DateTime(oldestEntry.AddMonths(x).Year, oldestEntry.AddMonths(x).Month, 1)).ToList();
-                    // generates list of months between the month of the oldest Entry and this month
+                    List<DateTime> monthsList = monthlyData.Select(obj => new DateTime(obj.DateAttribute.Year, obj.DateAttribute.Month, 1)).Distinct().ToList(); // test this works
                     foreach (DateTime month in monthsList)
                     {
                         DateTime LB = month;
@@ -98,7 +96,7 @@ namespace Fitness_Appv2.Services
                     }
                 }
             }
-            await _DbCon.QueryAsync<PendingSetsTable>("UPDATE PendingSetsTable SET DailyMedianTaken = TRUE WHERE DailyMedianTaken = FALSE;");
+            await _DbCon.QueryAsync<PendingSetsTable>("UPDATE PendingSetsTable SET DailyMedianTaken = TRUE WHERE DailyMedianTaken = FALSE AND DateAttribute <> ?;", DateTime.Today);
             await _DbCon.QueryAsync<PendingSetsTable>("DELETE FROM PendingSetsTable WHERE DateAttribute < ?;", startOfThisMonth);
             await _DbCon.QueryAsync<DailyMediansTable>("DELETE FROM DailyMediansTable WHERE DateAttribute < ?;", startOfThisMonth);
         }
@@ -134,7 +132,7 @@ namespace Fitness_Appv2.Services
         {
             try
             {
-                return await _DbCon.Table<PendingSetsTable>().ToListAsync(); //returns db as list
+                return await _DbCon.QueryAsync<PendingSetsTable>("SELECT * FROM PendingSetsTable ORDER BY DateAttribute DESC;");
             }
             catch
             {
@@ -243,9 +241,15 @@ namespace Fitness_Appv2.Services
             return (await _DbCon.QueryAsync<XcisesTable>("SELECT IsBodyweightAttribute FROM XcisesTable WHERE Id = ?;", Id))[0].IsBodyweightAttribute;  
         }
 
-        public async void UpdateBodyweightAsync(float bodyweight, int Id)
+        public async void UpdateBodyweightThisWeekAsync(float bodyweight)
         {
-            await _DbCon.QueryAsync<UserDataTable>("UPDATE UserDataTable SET BodyweightAttribute = ? WHERE Id = ?;", bodyweight, Id);
+            CheckNeedNewUserDataAsync();
+            await _DbCon.QueryAsync<UserDataTable>("UPDATE UserDataTable SET BodyweightAttribute = ? WHERE DateAttribute = ?;", bodyweight, Utilities.GetLastMonday(DateTime.Today));
+        }
+        public async void UpdateConsistencyGoalThisWeekAsync(int consistency)
+        {
+            CheckNeedNewUserDataAsync();
+            await _DbCon.QueryAsync<UserDataTable>("UPDATE UserDataTable SET WeeklyConsistencyGoalAttribute = ? WHERE DateAttribute = ?;", consistency, Utilities.GetLastMonday(DateTime.Today));
         }
         public async void UpdateXciseIsPinnedAsync(Boolean NewIsPinned, int Id)
         {
@@ -255,8 +259,9 @@ namespace Fitness_Appv2.Services
         {
             return await _DbCon.QueryAsync<XcisesTable>("SELECT * FROM XcisesTable WHERE IsPinnedAttribute = TRUE;");
         }
-        public async Task<UserDataTable> GetLatestUserDataAsync()
+        public async Task<UserDataTable> GetThisWeeksUserData()
         {
+            CheckNeedNewUserDataAsync(); // check that this executes in the correct order 
             try
             {
                 return (await _DbCon.QueryAsync<UserDataTable>("SELECT * FROM UserDataTable ORDER BY DateAttribute DESC;"))[0];
@@ -266,8 +271,30 @@ namespace Fitness_Appv2.Services
                 return null;
             }
         }
+        public async void CheckNeedNewUserDataAsync()
+        {
+            List<UserDataTable> userdata = (await _DbCon.QueryAsync<UserDataTable>("SELECT * FROM UserDataTable ORDER BY DateAttribute DESC;"));
+            // can't use GetUserDataAsync as it calls this method
+            if (userdata != null || userdata[0].DateAttribute < Utilities.GetLastMonday(DateTime.Today))
+            {
+                // if no userdata for this week
+
+                float bodyweight;
+                int weeklyConsistencyGoal;
+                if (userdata == null) { bodyweight = 0; weeklyConsistencyGoal = 0; }
+                else { bodyweight = userdata[0].BodyweightAttribute; weeklyConsistencyGoal = userdata[0].WeeklyConsistencyGoalAttribute; }
+                await _DbCon.InsertAsync(new UserDataTable
+                {
+                    BodyweightAttribute = bodyweight,
+                    DateAttribute = Utilities.GetLastMonday(DateTime.Today),
+                    WeeklyConsistencyAttribute = 0,
+                    WeeklyConsistencyGoalAttribute = weeklyConsistencyGoal
+                });
+            }
+        }
         public async Task<List<UserDataTable>> GetUserDataAsync()
         {
+            CheckNeedNewUserDataAsync();
             try
             {
                 return await _DbCon.QueryAsync<UserDataTable>("SELECT * FROM UserDataTable ORDER BY DateAttribute DESC;");
@@ -314,27 +341,22 @@ namespace Fitness_Appv2.Services
             await _DbCon.QueryAsync<RoutinesTable>("DELETE FROM RoutinesTable WHERE Id = ?;", Id);
         }
 
-        public async void UpdateConsistency(int count)
+        public async void UpdateWeeklyConsistency(List<PendingSetsTable> newSets)
         {
-            UserDataTable latest = await GetLatestUserDataAsync();
-            if (latest == null || latest.DateAttribute < Utilities.GetLastMonday(DateTime.Today))
-            { 
-                // if no record for this week
-                float bodyweight;
-                if (latest == null) { bodyweight = 0; } else { bodyweight = latest.BodyweightAttribute; }
-                
-                await _DbCon.InsertAsync(new UserDataTable
-                {
-                    BodyweightAttribute = bodyweight,
-                    DateAttribute = Utilities.GetLastMonday(DateTime.Today),
-                    WeeklyConsistencyAttribute = count
-                });
-            }
-            else
+            List<DateTime> weeksList = newSets.Select(obj => Utilities.GetLastMonday(obj.DateAttribute)).Distinct().ToList();
+            List<UserDataTable> userdataList = await GetUserDataAsync();
+            foreach (DateTime week in weeksList)
             {
-                // if record for this week
-                await _DbCon.QueryAsync<UserDataTable>("UPDATE UserDataTable SET WeeklyConsistencyAttribute = ? WHERE Id = ?;", count + latest.WeeklyConsistencyAttribute, latest.Id);
+                DateTime LB = week;
+                DateTime UB = LB.AddDays(7);
+                int count = newSets.Where(obj => obj.DateAttribute >= LB && obj.DateAttribute < UB).Count();
+                List<UserDataTable> userdataThatWeek = userdataList.Where(obj => obj.DateAttribute == week).ToList();
+
+                int prevCount;
+                if (userdataThatWeek.Count() != 0) { prevCount = userdataThatWeek[0].WeeklyConsistencyAttribute; } else { prevCount = 0; }
+                await _DbCon.QueryAsync<UserDataTable>("UPDATE UserDataTable SET WeeklyConsistencyAttribute = ? WHERE DateAttribute = ?;", count + prevCount, week);
             }
+            // Test This
         }
 
 
@@ -345,3 +367,4 @@ namespace Fitness_Appv2.Services
     }
 } 
 
+ 

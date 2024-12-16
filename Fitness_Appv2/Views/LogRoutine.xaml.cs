@@ -81,7 +81,7 @@ namespace Fitness_Appv2.Views
                     activeComponents[currComponentIndex].Sets = Convert.ToInt16(setsInput.Text);
                 }
                 activeComponents[currComponentIndex].XciseId = xcisePicker.SelectedIndex + 1; 
-                if (activeComponents[currComponentIndex].SetsList == null | setsChanged == true)
+                if (activeComponents[currComponentIndex].SetsList == null || setsChanged == true)
                 {
                     List<SetLogDataModel> expectedInputs = new List<SetLogDataModel>();
                     for (int i = 0; i < activeComponents[currComponentIndex].Sets; i++)
@@ -118,8 +118,10 @@ namespace Fitness_Appv2.Views
 
         private void SaveSet_Clicked(object sender, EventArgs e)
         {
-            int reps = Convert.ToInt16(repsInput.Text);
-            int weight = Convert.ToInt16(weightInput.Text);
+            float reps;
+            if (repsInput.Text == "") { reps = 0; } else { reps = Convert.ToSingle(repsInput.Text); };
+            float weight;
+            if (weightInput.Text == "") { weight = 0; } else { weight = Convert.ToSingle(weightInput.Text); };
             activeComponents[currComponentIndex].SetsList[currSetIndex].Reps = reps;
             activeComponents[currComponentIndex].SetsList[currSetIndex].Weight = weight;
             SetsView.ItemsSource = null;
@@ -146,18 +148,19 @@ namespace Fitness_Appv2.Views
         private async void LogWorkout_Clicked(object sender, EventArgs e)
         {
             DateTime date = DateTime.Today;
+            UserDataTable userdata = await App.Db.GetThisWeeksUserData();
             // sanitisation
             foreach (LogRoutineDataModel component in activeComponents)
             {
                 bool isBodyweight = await App.Db.GetIsBodyweightXciseAsync(component.XciseId);
-                UserDataTable userdata = await App.Db.GetLatestUserDataAsync();
-                if (isBodyweight && (userdata == null || userdata.BodyweightAttribute == 0))
+                
+                if (isBodyweight && userdata.BodyweightAttribute == 0)
                 {
                     inputObjection.IsVisible = true;
                     inputObjection.Text = "Bodyweight Exercise Inputed. Please record your bodyweight on the home page first.";
                     return;
                 }
-                if (component.Sets <= 0 | component.XciseId == 0)
+                if (component.Sets <= 0 || component.XciseId == 0)
                 {
                     inputObjection.IsVisible = true;
                     inputObjection.Text = "Workout Data Incomplete";
@@ -166,7 +169,7 @@ namespace Fitness_Appv2.Views
                
                 foreach (SetLogDataModel set in component.SetsList)
                 {
-                    if (set.Reps <= 0 | (set.Weight <= 0 && !isBodyweight))
+                    if (set.Reps <= 0 || (set.Weight <= 0 && !isBodyweight))
                     {
                         inputObjection.IsVisible = true;
                         inputObjection.Text = "Workout Data Incomplete";
@@ -175,11 +178,11 @@ namespace Fitness_Appv2.Views
                 }
             }
             inputObjection.IsVisible = false;
+
             // log sets
             foreach (LogRoutineDataModel component in activeComponents)
             {
                 bool isBodyweight = await App.Db.GetIsBodyweightXciseAsync(component.XciseId);
-                UserDataTable userdata = await App.Db.GetLatestUserDataAsync();
                 foreach (SetLogDataModel set in component.SetsList)
                 {
                     float weight;

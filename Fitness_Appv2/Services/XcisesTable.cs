@@ -5,10 +5,7 @@ using System.Text;
 
 namespace Fitness_Appv2.Services
 {
-    public class XcisesTable { 
-
-        [PrimaryKey, AutoIncrement]
-        public int Id { get; set; }
+    public class XcisesTable:Table { 
         public string XciseNameAttribute { get; set; }
         public bool IsBodyweightAttribute { get; set; }
         public float PBAttribute { get; set; }

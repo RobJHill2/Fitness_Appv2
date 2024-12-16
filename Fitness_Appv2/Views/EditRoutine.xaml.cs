@@ -93,7 +93,7 @@ namespace Fitness_Appv2.Views
             }
             foreach (RoutineComponentsTable component in activeComponents)
             {
-                if (component.SetsAttribute <= 0 | component.XciseIdAttribute == 0) 
+                if (component.SetsAttribute <= 0 || component.XciseIdAttribute == 0) 
                 {
                     inputObjection.IsVisible = true;
                     inputObjection.Text = "Num. Sets must be above 0, You must choose an exercise for each component.";

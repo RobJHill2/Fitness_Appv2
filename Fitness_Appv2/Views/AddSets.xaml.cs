@@ -31,27 +31,30 @@ namespace Fitness_Appv2.Views
                 inputObjection.IsVisible = false;
                 XcisesTable item = xcisePicker.SelectedItem as XcisesTable;
                 int xciseId = item.Id; // record Index instead?
+                bool xciseIsBodyweight = await App.Db.GetIsBodyweightXciseAsync(xciseId);
                 float reps = Convert.ToSingle(repsInput.Text);
                 float weight;
-                if (!item.IsBodyweightAttribute) {
+                if (!xciseIsBodyweight) {
                     weight = Convert.ToSingle(weightInput.Text);
                 }
                 else
                 {
-                    UserDataTable userdata = (await App.Db.GetLatestUserDataAsync());
+                    UserDataTable userdata = (await App.Db.GetThisWeeksUserData());
                     if (userdata != null && userdata.BodyweightAttribute != 0)
                     {
-                        weight = (await App.Db.GetLatestUserDataAsync()).BodyweightAttribute + Convert.ToSingle(weightInput.Text);
+                        weight = userdata.BodyweightAttribute + Convert.ToSingle(weightInput.Text);
                     } // If it is a bodyweight exercise, must add bodyweight to any additional weight
                     else
                     {
                         inputObjection.IsVisible = true;
                         inputObjection.Text = "This is a Bodyweight Exercise. Please record your bodyweight on the home page.";
+                        await Task.Delay(1500);
+                        ((Button)sender).Text = "Submit Set";
                         return;
                     }
                 }
                 
-                if ((reps > 0) && (weight > 0 | item.IsBodyweightAttribute)) //sanitisation
+                if ((reps > 0) && (weight > 0 || xciseIsBodyweight)) //sanitisation
                 {
                     DateTime date = DateTime.Today;
                     float e1RMax = Utilities.GetE1RMax(reps, weight);
@@ -62,17 +65,18 @@ namespace Fitness_Appv2.Views
                         E1RMaxAttribute = e1RMax,
                         DailyMedianTaken = false,
                     }); // passes record obj into save method
+                    DataView.ItemsSource = null;
                     DataView.ItemsSource = await App.Db.GetPendingSets();
                     repsInput.Text = weightInput.Text = "";
                     xcisePicker.SelectedIndex = -1;
-                    await Task.Delay(1500);
-                    ((Button)sender).Text = "Submit Set";
                 }
                 else
                 {
                     inputObjection.IsVisible = true;
                     inputObjection.Text = "Reps and Weight must be above 0 if it is not a Bodyweight Exercise";
                 }
+                await Task.Delay(1500);
+                ((Button)sender).Text = "Submit Set";
             }
         }
 

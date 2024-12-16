@@ -94,6 +94,9 @@
     <FlyoutItem Title="Exercises">
         <ShellContent Route="Xcises" ContentTemplate="{DataTemplate local:Xcises}"/>
     </FlyoutItem>
+    <FlyoutItem Title="Profile">
+        <ShellContent Route="Profile" ContentTemplate="{DataTemplate local:Profile}"/>
+    </FlyoutItem>
     <!-- When the Flyout is visible this will be a menu item you can tie a click behavior to  -->
     <MenuItem Text="Logout" StyleClass="MenuItemLayoutStyle" Clicked="OnMenuItemClicked">
     </MenuItem>
