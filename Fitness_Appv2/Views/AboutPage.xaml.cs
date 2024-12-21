@@ -23,14 +23,5 @@ namespace Fitness_Appv2.Views
             base.OnAppearing();
             viewPinned.ItemsSource = await App.Db.GetPinnedXcisesAsync();
         }
-        public async void GenerateQuoteAsync()
-        {
-            StreamReader sr = new StreamReader("");
-            string[] quotes = (await sr.ReadToEndAsync()).Split('\n');
-            
-            int index = (DateTime.Today.Year*DateTime.Today.Month*DateTime.Today.Day) % 1000; // hashing algorithm
-
-            MotivationalQuote.Text = quotes[index];
-        }
     }
 }

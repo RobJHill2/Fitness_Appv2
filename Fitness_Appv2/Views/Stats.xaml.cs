@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +14,17 @@ namespace Fitness_Appv2.Views
 {
     public partial class Stats : ContentPage
     {
+        List<SetMediansTable> setsGraphSource;
+        List<UserDataTable> bodyweightGraphSource;
+        List<UserDataTable> consistencyGraphSource;
+
+        List<string> userDataChoices;
+        List<XcisesTable> xciseChoices;
+
+        string graphTypeChoice;
+        XcisesTable xciseChoice;
+        string userDataChoice;
+
         public Stats()
         {
             InitializeComponent();
@@ -20,15 +32,57 @@ namespace Fitness_Appv2.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            picker.ItemsSource = await App.Db.GetXciseNamesAsync(); // provides data source 
+            graphTypePicker.ItemsSource = new List<string>() { "Exercises", "User Data" }; // provides data setsGraphSource for picker
+
+            setsGraphSource = await App.Db.GetSetsGraphDataAsync();
+            bodyweightGraphSource = await App.Db.GetBodyweightGraphDataAsync();
+            consistencyGraphSource = await App.Db.GetConsistencyGraphDataAsync();
+
+            userDataChoices = new List<string>() { "Bodyweight", "Consistency" };
+            xciseChoices = await App.Db.GetXcisesAsync();
         }
-        private async void Picker_ChangedAsync(object sender, EventArgs e) 
+        private void GraphTypePicker_Changed (object sender, EventArgs e) 
         {
-            XcisesTable item = picker.SelectedItem as XcisesTable; // casting from 'object' type to 'PendingSetsTable' so can access attributes
-            List<SetMediansTable> source = new List<SetMediansTable>();
-            source.AddRange(await App.Db.GetXciseDailyMediansAsync(item.Id));
-            source.AddRange(await App.Db.GetXciseMonthlyMediansAsync(item.Id));
-            chartSeries.ItemsSource = source;
+            graphTypeChoice = graphTypePicker.SelectedItem as string;
+
+            if (graphTypeChoice == "Exercises")
+            {
+                variablePicker.ItemsSource = xciseChoices;
+                variablePicker.ItemDisplayBinding = new Binding("XciseNameAttribute");
+            }
+            else if (graphTypeChoice == "User Data")
+            {
+                variablePicker.ItemsSource = userDataChoices;
+                variablePicker.ItemDisplayBinding = null; 
+            }
+            variablePicker.IsEnabled = true;
+        }
+        private void VariablePicker_Changed (object sender, EventArgs e)
+        {
+            graphTypeChoice = graphTypePicker.SelectedItem as string;
+            if (graphTypeChoice == "Exercises")
+            {
+                xciseChoice = variablePicker.SelectedItem as XcisesTable;
+                if (xciseChoice != null)
+                {
+                    chartSeries.ItemsSource = setsGraphSource.Where(obj => obj.XciseIdAttribute == xciseChoice.Id);
+                }
+            }
+            else if (graphTypeChoice == "User Data")
+            {
+                userDataChoice = variablePicker.SelectedItem as string;
+                if (userDataChoice != null)
+                {
+                    if (userDataChoice == "Bodyweight")
+                    {
+                        chartSeries.ItemsSource = bodyweightGraphSource;
+                    }
+                    else if (userDataChoice == "Consistency")
+                    {
+                        chartSeries.ItemsSource = consistencyGraphSource;
+                    }
+                }
+            }
         }
     }
-}
+} 

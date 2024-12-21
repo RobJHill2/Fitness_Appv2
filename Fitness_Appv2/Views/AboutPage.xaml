@@ -15,13 +15,11 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto, Auto, Auto, *">
+    <Grid RowDefinitions="Auto, Auto, *">
         <Label Text="Welcome" TextColor="Black" FontSize="30" Grid.Row="0"/>
 
-        <Label x:Name="MotivationalQuote" Grid.Row="1"/>
-
-        <Label Text="Pinned Exercises:" TextColor="Black" FontSize="20" Grid.Row="2"/>
-        <CollectionView x:Name="viewPinned" Grid.Row="3">
+        <Label Text="Pinned Exercises:" TextColor="Black" FontSize="20" Grid.Row="1"/>
+        <CollectionView x:Name="viewPinned" Grid.Row="2">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <StackLayout>

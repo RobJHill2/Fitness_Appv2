@@ -20,7 +20,8 @@ namespace Fitness_Appv2.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            DataView.ItemsSource = await App.Db.GetPendingSets();
+            List<PendingSetsTable> test = await App.Db.GetPendingSetsAsync();
+            DataView.ItemsSource = test;
             xcisePicker.ItemsSource = await App.Db.GetXciseNamesAsync();
         }
         private async void SubmitSet_ClickedAsync(object sender, EventArgs e)
@@ -63,10 +64,10 @@ namespace Fitness_Appv2.Views
                         XciseIdAttribute = xciseId,
                         DateAttribute = date,
                         E1RMaxAttribute = e1RMax,
-                        DailyMedianTaken = false,
+                        DailyMedianTakenAttribute = false,
                     }); // passes record obj into save method
                     DataView.ItemsSource = null;
-                    DataView.ItemsSource = await App.Db.GetPendingSets();
+                    DataView.ItemsSource = await App.Db.GetPendingSetsAsync();
                     repsInput.Text = weightInput.Text = "";
                     xcisePicker.SelectedIndex = -1;
                 }
@@ -79,12 +80,24 @@ namespace Fitness_Appv2.Views
                 ((Button)sender).Text = "Submit Set";
             }
         }
+        private async void UndoSet_Clicked(object sender, EventArgs e)
+        {
+            App.Db.UndoSetAsync();
+            DataView.ItemsSource = null;
+            DataView.ItemsSource = await App.Db.GetPendingSetsAsync();
+        }
+        private async void RedoSet_Clicked(object sender, EventArgs e)
+        {
+            App.Db.RedoSetAsync();
+            DataView.ItemsSource = null;
+            DataView.ItemsSource = await App.Db.GetPendingSetsAsync();
+        }
 
         private async void TempButton_Clicked(object sender, EventArgs e)
         {
             // currently deletes all Routines
             await App.Db.CustomMethod();
-            DataView.ItemsSource = await App.Db.GetPendingSets();
+            DataView.ItemsSource = await App.Db.GetPendingSetsAsync();
         }
     }
 }

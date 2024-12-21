@@ -7,10 +7,14 @@ public static class Utilities
 	{
 		data.Sort();
 		int len = data.Count;
-        if (len % 2 == 0) { 
-			return data[(len / 2) - 1] + data[len / 2] / 2; } 
-		else { 
-			return  data[(len - 1) / 2]; }
+        if (len % 2 == 0) 
+		{ 
+			return (data[(len / 2) - 1] + data[len / 2]) / 2; 
+		} 
+		else 
+		{ 
+			return  data[(len - 1) / 2]; 
+		}
     }
 
 	public static float GetE1RMax(float reps, float weight)

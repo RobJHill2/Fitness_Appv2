@@ -196,7 +196,7 @@ namespace Fitness_Appv2.Views
                         XciseIdAttribute = component.XciseId,
                         DateAttribute = date,
                         E1RMaxAttribute = e1RMax,
-                        DailyMedianTaken = false,
+                        DailyMedianTakenAttribute = false,
                     });
                 }
              }

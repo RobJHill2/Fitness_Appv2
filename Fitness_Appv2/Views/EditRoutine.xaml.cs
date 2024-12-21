@@ -111,7 +111,7 @@ namespace Fitness_Appv2.Views
             else
             {
                 App.Db.UpdateRoutineNameAsync(RoutineName.Text, RoutineId);
-                App.Db.DeleteRoutineComponents(RoutineId); // clears previous version of routine
+                App.Db.DeleteRoutineComponentsAsync(RoutineId); // clears previous version of routine
             }
             foreach (RoutineComponentsTable component in activeComponents)
             {

@@ -54,7 +54,7 @@ namespace Fitness_Appv2.Views
             changeIsPinned.IsVisible = true;
         }
 
-        private async void SubmitIsPinned_Clicked(object sender, EventArgs e)
+        private void SubmitIsPinned_Clicked(object sender, EventArgs e)
         {
             XcisesList[currComponentIndex].IsPinnedAttribute = isPinnedInput.IsChecked;    
             App.Db.UpdateXciseIsPinnedAsync(XcisesList[currComponentIndex].IsPinnedAttribute, XcisesList[currComponentIndex].Id);

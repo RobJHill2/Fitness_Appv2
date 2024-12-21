@@ -4,15 +4,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:chart="clr-namespace:Syncfusion.SfChart.XForms;assembly=Syncfusion.SfChart.XForms"
              x:Class="Fitness_Appv2.Views.Stats">
-    <Grid RowDefinitions="Auto,*">
-        <Picker x:Name="picker" 
-                Title="Select Exercise" 
-                ItemDisplayBinding="{Binding XciseNameAttribute}"
-                SelectedIndexChanged="Picker_ChangedAsync"
-                Grid.Row="0" /> <!--Binding displays an attribute of each record in the data source-->
+    <Grid RowDefinitions="Auto, Auto,*">
+        <Picker x:Name="graphTypePicker" 
+            Title="Select Graph Type" 
+            SelectedIndexChanged="GraphTypePicker_Changed"
+            Grid.Row="0" />
+        <Picker x:Name="variablePicker" 
+            Title="Select Variable" 
+            SelectedIndexChanged="VariablePicker_Changed"
+            IsEnabled="False"
+            Grid.Row="1" />
         
-        
-        <chart:SfChart x:Name="Chart" Grid.Row="1">
+        <chart:SfChart x:Name="Chart" Grid.Row="2">
             
             <chart:SfChart.PrimaryAxis>
                 <chart:DateTimeAxis/>
