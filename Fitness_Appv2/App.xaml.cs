@@ -21,8 +21,7 @@ namespace Fitness_Appv2
 
         public App()
         {
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NDaF5cWWtCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWH9fcXVVR2RYVURxXUE=");
-
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NMaF5cXmBCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWX5fcXVVRWFcUUNyXko=");
             // **** TEMPLATE CODE START ****
             InitializeComponent();
             MainPage = new AppShell();

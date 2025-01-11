@@ -1,3 +1,4 @@
+<!-- **** TEMPLATE CODE START **** -->
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
@@ -57,3 +58,4 @@
     </Compile>
   </ItemGroup>
 </Project>
+<!-- **** TEMPLATE CODE END **** -->
