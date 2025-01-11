@@ -1,14 +1,8 @@
 ﻿using Fitness_Appv2.Services;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Security;
-using System.Text;
-using System.Threading.Tasks;
-
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
 
 namespace Fitness_Appv2.Views
 {
@@ -66,6 +60,7 @@ namespace Fitness_Appv2.Views
                 if (xciseChoice != null)
                 {
                     chartSeries.ItemsSource = setsGraphSource.Where(obj => obj.XciseIdAttribute == xciseChoice.Id);
+                    chartSeries.YBindingPath = "E1RMaxAttribute";
                 }
             }
             else if (graphTypeChoice == "User Data")
@@ -76,10 +71,12 @@ namespace Fitness_Appv2.Views
                     if (userDataChoice == "Bodyweight")
                     {
                         chartSeries.ItemsSource = bodyweightGraphSource;
+                        chartSeries.YBindingPath = "BodyweightAttribute";
                     }
                     else if (userDataChoice == "Consistency")
                     {
                         chartSeries.ItemsSource = consistencyGraphSource;
+                        chartSeries.YBindingPath = "ConsistencyAttribute";
                     }
                 }
             }

@@ -9,8 +9,7 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <StackLayout>
-                            <Label Text="{Binding Id}"/>
-                            <Label Text="{Binding XciseIdAttribute}"/>
+                            <Label Text="{Binding XciseNameAttribute}"/>
                             <Label Text="{Binding SetsAttribute}"/>
                         </StackLayout>
                     </DataTemplate>
@@ -26,7 +25,7 @@
                 <Button x:Name="deleteComponent" Text="Delete" Clicked="DeleteComponent_Clicked" Grid.Row="3"/>
             </Grid>
             <Button x:Name="newComponent" Text = "Add Exercise" Clicked="NewComponent_Clicked" Grid.Row="3"/>
-            <Button x:Name= "saveRoutine" Text="Save Routine" Clicked="SaveRoutine_Clicked" Grid.Row="4"/>
+            <Button x:Name= "saveRoutine" Text="Save Routine" Clicked="SaveRoutine_ClickedAsync" Grid.Row="4"/>
             <Label x:Name="inputObjection" IsVisible="False" Grid.Row="5"/>
         </Grid>
     </StackLayout>

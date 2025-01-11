@@ -1,12 +1,7 @@
 ﻿using Fitness_Appv2.Services;
 using System;
-using System.ComponentModel;
-using System.Runtime.InteropServices;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
 using System.Collections.Generic;
-using System.Reflection;
-using System.IO;
 using System.Linq;
 
 namespace Fitness_Appv2.Views
@@ -18,7 +13,7 @@ namespace Fitness_Appv2.Views
             InitializeComponent();         
         }
 
-        protected override async void OnAppearing()
+        protected override void OnAppearing()
         {
             base.OnAppearing();
             DisplayUserDataAsync();
@@ -47,7 +42,7 @@ namespace Fitness_Appv2.Views
                 ConsistencyGoalDisplay.Text = "Current Goal: \nNot Set";
             }
         
-            DateTime lastMonday = Utilities.GetLastMonday(DateTime.Today);
+            DateTime lastMonday = Utilities.GetLastMonday();
             UserDataTable userdataLastWeek;
             try
             {
@@ -84,7 +79,7 @@ namespace Fitness_Appv2.Views
         }
 
 
-        private async void BodyweightUpdate_Pressed(object sender, EventArgs e) // input string not in right format
+        private void BodyweightUpdate_Clicked(object sender, EventArgs e) // input string not in right format
         {
             float bodyweight = Convert.ToSingle(BodyweightInput.Text);
             if (bodyweight > 0) 
@@ -96,7 +91,7 @@ namespace Fitness_Appv2.Views
             }             
         }
         
-        private async void ConsistencyGoalUpdate_Pressed(object sender, EventArgs e) // input string not in right format
+        private void ConsistencyGoalUpdate_Clicked(object sender, EventArgs e) // input string not in right format
         {
             int consistencyGoal = Convert.ToInt16(ConsistencyGoalInput.Text);
             if (consistencyGoal > 0)

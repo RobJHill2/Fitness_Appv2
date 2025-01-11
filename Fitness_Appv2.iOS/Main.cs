@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿// ****TEMPLATE CODE START ****
 
-using Foundation;
+
 using UIKit;
 
 namespace Fitness_Appv2.iOS
@@ -18,3 +16,6 @@ namespace Fitness_Appv2.iOS
         }
     }
 }
+
+
+// ****TEMPLATE CODE END ****

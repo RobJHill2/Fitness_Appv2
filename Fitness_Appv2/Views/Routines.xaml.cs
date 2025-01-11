@@ -1,12 +1,7 @@
 ﻿using Fitness_Appv2.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
 
 namespace Fitness_Appv2.Views
 {
@@ -36,7 +31,7 @@ namespace Fitness_Appv2.Views
             Navigation.PushAsync(new EditRoutine(displayedRoutines[currRoutineIndex].Id));
         }
 
-        private async void DeleteRoutine_Clicked(object sender, EventArgs e)
+        private void DeleteRoutine_Clicked(object sender, EventArgs e)
         {
             App.Db.DeleteRoutineComponentsAsync(displayedRoutines[currRoutineIndex].Id);
             App.Db.DeleteRoutineAsync(displayedRoutines[currRoutineIndex].Id);

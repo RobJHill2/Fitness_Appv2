@@ -9,9 +9,8 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <StackLayout>
-                                <Label Text="{Binding Id}"/>
-                                <Label Text="{Binding XciseId}"/>
-                                <Label Text="{Binding Sets}"/>
+                                <Label Text="{Binding XciseNameAttribute}"/>
+                                <Label Text="{Binding SetsAttribute}"/>
                             </StackLayout>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
@@ -34,7 +33,6 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <StackLayout>
-                                <Label Text="{Binding Index}"/>
                                 <Label Text="{Binding Reps}"/>
                                 <Label Text="{Binding Weight}"/>
                             </StackLayout>
@@ -48,7 +46,7 @@
                 </Grid>
                 <Button x:Name="editFinished" Text="Back" Clicked="EditFinished_Clicked" Grid.Row="2"/>
             </Grid>
-            <Button x:Name= "logWorkout" Text="Log Workout" Clicked="LogWorkout_Clicked" Grid.Row="1"/>
+            <Button x:Name= "logWorkout" Text="Log Workout" Clicked="LogWorkout_ClickedAsync" Grid.Row="1"/>
             <Label x:Name="inputObjection" IsVisible="False" Grid.Row="2"/>
         </Grid>
     </StackLayout>

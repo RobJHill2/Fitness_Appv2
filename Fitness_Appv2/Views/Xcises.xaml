@@ -9,7 +9,7 @@
                 <Label Text="Bodyweight Exercise?" FontSize ="Medium" TextColor="Black" Grid.Column="0"/>
                 <CheckBox x:Name="isBodyweightInput" Grid.Column="1"/>
             </Grid>
-            <Button x:Name="submitXcise" Text="Submit Exercise" Clicked="SubmitXcise_Clicked" Grid.Row="2"/>
+            <Button x:Name="submitXcise" Text="Submit Exercise" Clicked="SubmitXcise_ClickedAsync" Grid.Row="2"/>
             <CollectionView x:Name="xcisesView" Grid.Row="3" BackgroundColor="White" SelectionMode="Single" SelectionChanged="XcisesView_SelectionChanged">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
@@ -35,7 +35,9 @@
                                 TextColor="Black"
                                 FontSize="Medium"/>
                             <Label Text="Pinned?"/>
-                            <Label Text="{Binding IsPinnedAttribute}"/>
+                            <Label Text="{Binding IsPinnedAttribute}"
+                                TextColor="Black"
+                                FontSize="Medium"/>
                             <Label Text="------------------------------------" FontSize="Medium" TextColor="Black"/>
                         </StackLayout>
                     </DataTemplate>

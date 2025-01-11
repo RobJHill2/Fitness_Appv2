@@ -5,12 +5,11 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Xamarin.Forms;
 
+// **** TEMPLATE CODE START ****
 namespace Fitness_Appv2.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
-        //public IDataStore<Item> DataStore => DependencyService.Get<IDataStore<Item>>();
-
         bool isBusy = false;
         public bool IsBusy
         {
@@ -51,3 +50,4 @@ namespace Fitness_Appv2.ViewModels
         #endregion
     }
 }
+// **** TEMPLATE CODE END ****

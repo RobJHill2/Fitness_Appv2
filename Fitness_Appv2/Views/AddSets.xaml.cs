@@ -1,16 +1,11 @@
 ﻿using Fitness_Appv2.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace Fitness_Appv2.Views
 {
-    [XamlCompilation(XamlCompilationOptions.Compile)] // required for collection view in XAML file
     public partial class AddSets : ContentPage
     {
         public AddSets()
@@ -20,15 +15,14 @@ namespace Fitness_Appv2.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            List<PendingSetsTable> test = await App.Db.GetPendingSetsAsync();
-            DataView.ItemsSource = test;
+            DataView.ItemsSource = await App.Db.GetPendingSetsToViewAsync();
             xcisePicker.ItemsSource = await App.Db.GetXciseNamesAsync();
         }
         private async void SubmitSet_ClickedAsync(object sender, EventArgs e)
         {
-            if (((Button)sender).Text == "Submit Set") // this is to prevent double clicks registering twice
+            if (submitSet.Text == "Submit Set") // this is to prevent double clicks registering twice
             {
-                ((Button)sender).Text = "Submitting ...";
+                submitSet.Text = "Submitting ...";
                 inputObjection.IsVisible = false;
                 XcisesTable item = xcisePicker.SelectedItem as XcisesTable;
                 int xciseId = item.Id; // record Index instead?
@@ -40,7 +34,7 @@ namespace Fitness_Appv2.Views
                 }
                 else
                 {
-                    UserDataTable userdata = (await App.Db.GetThisWeeksUserData());
+                    UserDataTable userdata = (await App.Db.GetThisWeeksUserDataAsync());
                     if (userdata != null && userdata.BodyweightAttribute != 0)
                     {
                         weight = userdata.BodyweightAttribute + Convert.ToSingle(weightInput.Text);
@@ -50,7 +44,7 @@ namespace Fitness_Appv2.Views
                         inputObjection.IsVisible = true;
                         inputObjection.Text = "This is a Bodyweight Exercise. Please record your bodyweight on the home page.";
                         await Task.Delay(1500);
-                        ((Button)sender).Text = "Submit Set";
+                        submitSet.Text = "Submit Set";
                         return;
                     }
                 }
@@ -59,7 +53,7 @@ namespace Fitness_Appv2.Views
                 {
                     DateTime date = DateTime.Today;
                     float e1RMax = Utilities.GetE1RMax(reps, weight);
-                    App.Db.SaveSets(new PendingSetsTable
+                    App.Db.SaveSetAsync(new PendingSetsTable
                     {
                         XciseIdAttribute = xciseId,
                         DateAttribute = date,
@@ -67,7 +61,7 @@ namespace Fitness_Appv2.Views
                         DailyMedianTakenAttribute = false,
                     }); // passes record obj into save method
                     DataView.ItemsSource = null;
-                    DataView.ItemsSource = await App.Db.GetPendingSetsAsync();
+                    DataView.ItemsSource = await App.Db.GetPendingSetsToViewAsync();
                     repsInput.Text = weightInput.Text = "";
                     xcisePicker.SelectedIndex = -1;
                 }
@@ -77,27 +71,20 @@ namespace Fitness_Appv2.Views
                     inputObjection.Text = "Reps and Weight must be above 0 if it is not a Bodyweight Exercise";
                 }
                 await Task.Delay(1500);
-                ((Button)sender).Text = "Submit Set";
+                submitSet.Text = "Submit Set";
             }
         }
-        private async void UndoSet_Clicked(object sender, EventArgs e)
+        private async void UndoSet_ClickedAsync(object sender, EventArgs e)
         {
             App.Db.UndoSetAsync();
             DataView.ItemsSource = null;
-            DataView.ItemsSource = await App.Db.GetPendingSetsAsync();
+            DataView.ItemsSource = await App.Db.GetPendingSetsToViewAsync();
         }
-        private async void RedoSet_Clicked(object sender, EventArgs e)
+        private async void RedoSet_ClickedAsync(object sender, EventArgs e)
         {
             App.Db.RedoSetAsync();
             DataView.ItemsSource = null;
-            DataView.ItemsSource = await App.Db.GetPendingSetsAsync();
-        }
-
-        private async void TempButton_Clicked(object sender, EventArgs e)
-        {
-            // currently deletes all Routines
-            await App.Db.CustomMethod();
-            DataView.ItemsSource = await App.Db.GetPendingSetsAsync();
+            DataView.ItemsSource = await App.Db.GetPendingSetsToViewAsync();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿// **** TEMPLATE CODE START ****
+
 
 using Android.App;
 using Android.Content.PM;
@@ -26,3 +27,6 @@ namespace Fitness_Appv2.Droid
         }
     }
 }
+
+
+// **** TEMPLATE CODE END ****

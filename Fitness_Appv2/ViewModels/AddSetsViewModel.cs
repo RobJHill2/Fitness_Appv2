@@ -11,7 +11,7 @@ namespace Fitness_Appv2.ViewModels
     {
         public AddSetsViewModel()
         { 
-                Title = "Add Sets";            
+                Title = "Add SetsAttribute";            
         }
     }
 }

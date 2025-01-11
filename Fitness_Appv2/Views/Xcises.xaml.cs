@@ -2,11 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
 
 namespace Fitness_Appv2.Views
 {
@@ -24,8 +21,8 @@ namespace Fitness_Appv2.Views
             XcisesList = await App.Db.GetXcisesAsync();
             xcisesView.ItemsSource = XcisesList;
         }
-        private async void SubmitXcise_Clicked(object sender, EventArgs e){
-            if (((Button)sender).Text == "Submit Exercise")
+        private async void SubmitXcise_ClickedAsync(object sender, EventArgs e){
+            if (submitXcise.Text == "Submit Exercise")
             {
                 string name = xciseNameInput.Text;
                 bool isBodyweight = isBodyweightInput.IsChecked;
@@ -33,7 +30,7 @@ namespace Fitness_Appv2.Views
                 if (!string.IsNullOrEmpty(name) && !existingXcises.Contains(name))
                 {
                     submitXcise.Text = "Submitted";
-                    App.Db.SaveXcise(new XcisesTable
+                    App.Db.SaveXciseAsync(new XcisesTable
                     {
                         XciseNameAttribute = name,
                         IsBodyweightAttribute = isBodyweight,

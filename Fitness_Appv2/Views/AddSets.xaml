@@ -21,7 +21,7 @@
                                    TextColor="Black"
                                    FontSize="Medium"/>
                             <Label Text="Exercise"/>
-                            <Label Text="{Binding XciseIdAttribute}"
+                            <Label Text="{Binding XciseNameAttribute}"
                                    TextColor="Black"
                                    FontSize="Medium"/> 
                             <Label Text="Date"/>
@@ -33,7 +33,7 @@
                                     TextColor="Black"
                                     FontSize="Medium"/>
                             <Label Text="DailyMedianTaken"/>
-                            <Label Text="{Binding DailyMedianTaken}"
+                            <Label Text="{Binding DailyMedianTakenAttribute}"
                                     TextColor="Black"
                                     FontSize="Medium"/>
                             <Label Text="------------------------------------" FontSize="Medium" TextColor="Black"/>
@@ -42,10 +42,9 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
             <Grid ColumnDefinitions="Auto, Auto" Grid.Row="6">
-                <Button x:Name="UndoSet" Text="Undo" Clicked="UndoSet_Clicked" Grid.Column="0"/>
-                <Button x:Name="RedoSet" Text="Redo" Clicked="RedoSet_Clicked" Grid.Column="1"/>
+                <Button x:Name="UndoSet" Text="Undo" Clicked="UndoSet_ClickedAsync" Grid.Column="0"/>
+                <Button x:Name="RedoSet" Text="Redo" Clicked="RedoSet_ClickedAsync" Grid.Column="1"/>
             </Grid>
-            <Button x:Name="tempButton" Text = "Custom Button" Clicked="TempButton_Clicked" IsVisible ="False" Grid.Row="7"/>
         </Grid>
     </StackLayout>
 </ContentPage>
