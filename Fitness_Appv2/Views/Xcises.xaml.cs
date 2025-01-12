@@ -35,6 +35,7 @@ namespace Fitness_Appv2.Views
                         XciseNameAttribute = name,
                         IsBodyweightAttribute = isBodyweight,
                     });
+                    xcisesView.ItemsSource = null;
                     xcisesView.ItemsSource = await App.Db.GetXcisesAsync();
                     xciseNameInput.Text = "";
                     isBodyweightInput.IsChecked = false;

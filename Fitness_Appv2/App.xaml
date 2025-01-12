@@ -1,16 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<!-- **** TEMPLATE CODE START **** -->
 <Application xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Fitness_Appv2.App">
+    <!-- **** TEMPLATE CODE START **** -->
     <!--
         Define global resources and styles here, that apply to all pages in your app.
     -->
     <Application.Resources>
         <ResourceDictionary>
+            
             <Color x:Key="Primary">#2196F3</Color>
             <Style TargetType="Button">
-                <Setter Property="TextColor" Value="Black"></Setter>
+                <Setter Property="TextColor" Value="White"></Setter>
                 <Setter Property="VisualStateManager.VisualStateGroups">
                     <VisualStateGroupList>
                         <VisualStateGroup x:Name="CommonStates">
@@ -28,7 +29,18 @@
                     </VisualStateGroupList>
                 </Setter>
             </Style>
+     <!-- **** TEMPLATE CODE END **** -->
+
+            <Style TargetType="Label">
+                <Setter Property="TextColor" Value="DarkGray"/>
+            </Style>
+            <Style TargetType="Entry">
+                <Setter Property="TextColor" Value="Black"/>
+            </Style>
+            <Style TargetType="Picker">
+                <Setter Property="TextColor" Value="Black"/>
+            </Style>
         </ResourceDictionary>        
     </Application.Resources>
 </Application>
-<!-- **** TEMPLATE CODE END **** -->
+
