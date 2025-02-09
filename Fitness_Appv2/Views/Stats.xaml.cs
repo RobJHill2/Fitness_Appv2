@@ -12,12 +12,12 @@ namespace Fitness_Appv2.Views
         List<UserDataTable> bodyweightGraphSource;
         List<UserDataTable> consistencyGraphSource;
 
-        List<string> userDataChoices;
-        List<XcisesTable> xciseChoices;
+        List<string> userDataSecondaryOptions;
+        List<XcisesTable> xciseSecondaryOptions;
 
-        string graphTypeChoice;
-        XcisesTable xciseChoice;
-        string userDataChoice;
+        string primaryChoice;
+        XcisesTable xciseSecondaryChoice;
+        string userDataSecondaryChoice;
 
         public Stats()
         {
@@ -26,54 +26,54 @@ namespace Fitness_Appv2.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            graphTypePicker.ItemsSource = new List<string>() { "Exercises", "User Data" }; // provides data setsGraphSource for picker
+            primaryPicker.ItemsSource = new List<string>() { "Exercises", "User Data" }; // provides data setsGraphSource for picker
 
             setsGraphSource = await App.Db.GetSetsGraphDataAsync();
             bodyweightGraphSource = await App.Db.GetBodyweightGraphDataAsync();
             consistencyGraphSource = await App.Db.GetConsistencyGraphDataAsync();
 
-            userDataChoices = new List<string>() { "Bodyweight", "Consistency" };
-            xciseChoices = await App.Db.GetXcisesAsync();
+            userDataSecondaryOptions = new List<string>() { "Bodyweight", "Consistency" };
+            xciseSecondaryOptions = await App.Db.GetXcisesAsync();
         }
-        private void GraphTypePicker_Changed (object sender, EventArgs e) 
+        private void PrimaryPicker_Changed (object sender, EventArgs e) 
         {
-            graphTypeChoice = graphTypePicker.SelectedItem as string;
+            primaryChoice = primaryPicker.SelectedItem as string;
 
-            if (graphTypeChoice == "Exercises")
+            if (primaryChoice == "Exercises")
             {
-                variablePicker.ItemsSource = xciseChoices;
-                variablePicker.ItemDisplayBinding = new Binding("XciseNameAttribute");
+                secondaryPicker.ItemsSource = xciseSecondaryOptions;
+                secondaryPicker.ItemDisplayBinding = new Binding("XciseNameAttribute");
             }
-            else if (graphTypeChoice == "User Data")
+            else if (primaryChoice == "User Data")
             {
-                variablePicker.ItemsSource = userDataChoices;
-                variablePicker.ItemDisplayBinding = null; 
+                secondaryPicker.ItemsSource = userDataSecondaryOptions;
+                secondaryPicker.ItemDisplayBinding = null; 
             }
-            variablePicker.IsEnabled = true;
+            secondaryPicker.IsEnabled = true;
         }
-        private void VariablePicker_Changed (object sender, EventArgs e)
+        private void SecondaryPicker_Changed (object sender, EventArgs e)
         {
-            graphTypeChoice = graphTypePicker.SelectedItem as string;
-            if (graphTypeChoice == "Exercises")
+            primaryChoice = primaryPicker.SelectedItem as string;
+            if (primaryChoice == "Exercises")
             {
-                xciseChoice = variablePicker.SelectedItem as XcisesTable;
-                if (xciseChoice != null)
+                xciseSecondaryChoice = secondaryPicker.SelectedItem as XcisesTable;
+                if (xciseSecondaryChoice != null)
                 {
-                    chartSeries.ItemsSource = setsGraphSource.Where(obj => obj.XciseIdAttribute == xciseChoice.Id);
+                    chartSeries.ItemsSource = setsGraphSource.Where(obj => obj.XciseIdAttribute == xciseSecondaryChoice.Id);
                     chartSeries.YBindingPath = "E1RMaxAttribute";
                 }
             }
-            else if (graphTypeChoice == "User Data")
+            else if (primaryChoice == "User Data")
             {
-                userDataChoice = variablePicker.SelectedItem as string;
-                if (userDataChoice != null)
+                userDataSecondaryChoice = secondaryPicker.SelectedItem as string;
+                if (userDataSecondaryChoice != null)
                 {
-                    if (userDataChoice == "Bodyweight")
+                    if (userDataSecondaryChoice == "Bodyweight")
                     {
                         chartSeries.ItemsSource = bodyweightGraphSource;
                         chartSeries.YBindingPath = "BodyweightAttribute";
                     }
-                    else if (userDataChoice == "Consistency")
+                    else if (userDataSecondaryChoice == "Consistency")
                     {
                         chartSeries.ItemsSource = consistencyGraphSource;
                         chartSeries.YBindingPath = "ConsistencyAttribute";

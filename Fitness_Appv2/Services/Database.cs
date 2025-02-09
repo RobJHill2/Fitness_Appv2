@@ -8,12 +8,12 @@ namespace Fitness_Appv2.Services
 {
     public class Database
     {
-        private readonly SQLiteAsyncConnection DbCon; // create db connection obj
-        private readonly List<PendingSetsTable> recentlySavedStack = new List<PendingSetsTable>() { null }; // top of stack should always be a null
+        private readonly SQLiteAsyncConnection DbCon; // db connection object initialised
+        private readonly List<PendingSetsTable> undoRedoStack = new List<PendingSetsTable>() { null }; // top of stack should always be a null
         private int topPointer = 0; // points to next free index
         public Database(string DbPath) // Db class constructor
         {
-            DbCon = new SQLiteAsyncConnection(DbPath);
+            DbCon = new SQLiteAsyncConnection(DbPath); // db connection assigned, using location of db on disk as argument
             DbCon.CreateTableAsync<PendingSetsTable>(); // Creates PendingSetsTable on startup
             DbCon.CreateTableAsync<DailyMediansTable>();
             DbCon.CreateTableAsync<MonthlyMediansTable>();
@@ -117,39 +117,41 @@ namespace Fitness_Appv2.Services
                 try
                 {
                     return await DbCon.QueryAsync<DisplaySetsDataModel>(@"SELECT PendingSetsTable.*, XcisesTable.XciseNameAttribute 
-                                                                           FROM PendingSetsTable INNER JOIN XcisesTable ON PendingSetsTable.XciseIdAttribute = XcisesTable.Id
-                                                                           ORDER BY DateAttribute DESC, Id DESC;"); // sorts by Id within the same date
+                                                                          FROM PendingSetsTable INNER JOIN XcisesTable ON PendingSetsTable.XciseIdAttribute = XcisesTable.Id
+                                                                          ORDER BY DateAttribute DESC, Id DESC;"); // sorts by Id within the same date
                 }
                 catch
                 {
                     return null;
                 }
             }
-            public async void SaveSetAsync(PendingSetsTable saveData) //stores PendingSetsTable object (aka a record from PendingSetsTable class) in table, returns new PK
+            public async Task<int> SaveSetAsync(PendingSetsTable saveData) // must return a non-void as must be awaited for collectionview to update
             {
-                await DbCon.InsertAsync(saveData);
-
-                recentlySavedStack[topPointer] = saveData;
+                undoRedoStack[topPointer] = saveData;
                 topPointer++;
-                if (topPointer == recentlySavedStack.Count()) { recentlySavedStack.Add(null); } // if at top of stack add null value (makes checking redo validity simpler)
-                for (int i = topPointer; i < recentlySavedStack.Count(); i++) { recentlySavedStack[i] = null; } // clears anything above topPointer as new branch has started so redo should be impossible 
+                if (topPointer == undoRedoStack.Count()) { undoRedoStack.Add(null); } // if at top of stack add null value (makes checking redo validity simpler)
+                for (int i = topPointer; i < undoRedoStack.Count(); i++) { undoRedoStack[i] = null; } // clears anything above topPointer as new branch has started so redo should be impossible 
+
+                return await DbCon.InsertAsync(saveData); 
+                // when this happens the respective object in the undoRedoStack has its Id updated (autoincrement has a delayed effect?)
             }
+
             public async void UndoSetAsync()
             {
                 if (topPointer != 0)
                 {
                     topPointer--;
-                    await DbCon.QueryAsync<PendingSetsTable>("DELETE FROM PendingSetsTable WHERE Id = ?;", recentlySavedStack[topPointer].Id);
+                    await DbCon.QueryAsync<PendingSetsTable>("DELETE FROM PendingSetsTable WHERE Id = ?;", undoRedoStack[topPointer].Id);
                 }
             }
             public async void RedoSetAsync()
             {
-                if (recentlySavedStack[topPointer] != null)
+                if (undoRedoStack[topPointer] != null)
                 {
-                    await DbCon.InsertAsync(recentlySavedStack[topPointer]);
+                    await DbCon.InsertAsync(undoRedoStack[topPointer]);
 
                     topPointer++;
-                    if (topPointer == recentlySavedStack.Count()) { recentlySavedStack.Add(null); }
+                    if (topPointer == undoRedoStack.Count()) { undoRedoStack.Add(null); }
                 }
             }
         // **** PendingSetsTable Methods End ****
@@ -167,9 +169,9 @@ namespace Fitness_Appv2.Services
                 }
             }
 
-            public async void SaveXciseAsync(XcisesTable saveData)
+            public async Task<int> SaveXciseAsync(XcisesTable saveData)
             {
-                await DbCon.InsertAsync(saveData);
+                return await DbCon.InsertAsync(saveData);
             }
 
             public async Task<List<XcisesTable>> GetXciseIdsAsync()
@@ -230,7 +232,7 @@ namespace Fitness_Appv2.Services
             {
                 try
                 {
-                    return (await DbCon.QueryAsync<RoutinesTable>("SELECT XciseNameAttribute FROM RoutinesTable WHERE Id = ?;", Id))[0].NameAttribute;
+                    return (await DbCon.QueryAsync<RoutinesTable>("SELECT NameAttribute FROM RoutinesTable WHERE Id = ?;", Id))[0].NameAttribute;
                 }
                 catch
                 {
@@ -240,7 +242,7 @@ namespace Fitness_Appv2.Services
 
             public async void UpdateRoutineNameAsync(string name, int Id)
             {
-                await DbCon.QueryAsync<RoutinesTable>("UPDATE RoutinesTable SET XciseNameAttribute = ? WHERE Id = ?", name, Id);
+                await DbCon.QueryAsync<RoutinesTable>("UPDATE RoutinesTable SET XciseNameAttribute = ? WHERE Id = ?;", name, Id);
             }
 
             public async void DeleteRoutineAsync(int Id)
@@ -261,8 +263,8 @@ namespace Fitness_Appv2.Services
                 try
                 {
                     return (await DbCon.QueryAsync<LogRoutineComponentDataModel>(@"SELECT RoutineComponentsTable.XciseIdAttribute, RoutineComponentsTable.SetsAttribute, XcisesTable.XciseNameAttribute 
-                                                                                    FROM RoutineComponentsTable INNER JOIN XcisesTable ON RoutineComponentsTable.XciseIdAttribute = XcisesTable.Id 
-                                                                                    WHERE RoutineAttribute = ?;", RoutineId)).ToList();
+                                                                                   FROM RoutineComponentsTable INNER JOIN XcisesTable ON RoutineComponentsTable.XciseIdAttribute = XcisesTable.Id 
+                                                                                   WHERE RoutineAttribute = ?;", RoutineId)).ToList();
                 }
                 catch
                 {
@@ -331,7 +333,7 @@ namespace Fitness_Appv2.Services
             {
                 try
                 {
-                    return await DbCon.QueryAsync<UserDataTable>("SELECT BodyweightAttribute, DateAttribute FROM UserDataTable WHERE DateAttribute < ?;", Utilities.GetLastMonday());
+                    return await DbCon.QueryAsync<UserDataTable>("SELECT WeeklyConsistencyAttribute, DateAttribute FROM UserDataTable WHERE DateAttribute < ?;", Utilities.GetLastMonday());
                 }
                 catch
                 {
@@ -345,22 +347,23 @@ namespace Fitness_Appv2.Services
 
             public async void UpdateBodyweightThisWeekAsync(float bodyweight)
             {
-                CheckNeedNewUserDataAsync();
+                await CheckNeedNewUserDataAsync();
                 await DbCon.QueryAsync<UserDataTable>("UPDATE UserDataTable SET BodyweightAttribute = ? WHERE DateAttribute = ?;", bodyweight, Utilities.GetLastMonday());
             }
 
             public async void UpdateConsistencyGoalThisWeekAsync(int consistency)
             {
-                CheckNeedNewUserDataAsync();
+                await CheckNeedNewUserDataAsync();
                 await DbCon.QueryAsync<UserDataTable>("UPDATE UserDataTable SET WeeklyConsistencyGoalAttribute = ? WHERE DateAttribute = ?;", consistency, Utilities.GetLastMonday());
             }
 
             public async Task<UserDataTable> GetThisWeeksUserDataAsync()
             {
-                CheckNeedNewUserDataAsync(); // check that this executes in the correct order 
+                await CheckNeedNewUserDataAsync();
                 try
                 {
-                    return (await DbCon.QueryAsync<UserDataTable>("SELECT * FROM UserDataTable ORDER BY DateAttribute DESC;"))[0];
+                return (await DbCon.QueryAsync<UserDataTable>("SELECT * FROM UserDataTable ORDER BY DateAttribute DESC;"))[0];
+                    
                 }
                 catch
                 {
@@ -368,7 +371,7 @@ namespace Fitness_Appv2.Services
                 }
             }
 
-            public async void CheckNeedNewUserDataAsync()
+            public async Task<bool> CheckNeedNewUserDataAsync()
             {
                 List<UserDataTable> userdata = (await DbCon.QueryAsync<UserDataTable>("SELECT * FROM UserDataTable ORDER BY DateAttribute DESC;"));
                 // can't use GetUserDataAsync as it calls this method
@@ -388,11 +391,12 @@ namespace Fitness_Appv2.Services
                         WeeklyConsistencyGoalAttribute = weeklyConsistencyGoal
                     });
                 }
+                return true;
             }
 
             public async Task<List<UserDataTable>> GetUserDataAsync()
             {
-                CheckNeedNewUserDataAsync();
+                await CheckNeedNewUserDataAsync();
                 try
                 {
                     return await DbCon.QueryAsync<UserDataTable>("SELECT * FROM UserDataTable ORDER BY DateAttribute DESC;");

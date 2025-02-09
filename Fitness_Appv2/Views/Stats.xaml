@@ -5,13 +5,13 @@
              xmlns:chart="clr-namespace:Syncfusion.SfChart.XForms;assembly=Syncfusion.SfChart.XForms"
              x:Class="Fitness_Appv2.Views.Stats">
     <Grid RowDefinitions="Auto, Auto,*">
-        <Picker x:Name="graphTypePicker" 
+        <Picker x:Name="primaryPicker" 
             Title="Select Graph Type" 
-            SelectedIndexChanged="GraphTypePicker_Changed"
+            SelectedIndexChanged="PrimaryPicker_Changed"
             Grid.Row="0" />
-        <Picker x:Name="variablePicker" 
+        <Picker x:Name="secondaryPicker" 
             Title="Select Variable" 
-            SelectedIndexChanged="VariablePicker_Changed"
+            SelectedIndexChanged="SecondaryPicker_Changed"
             IsEnabled="False"
             Grid.Row="1"/>
         

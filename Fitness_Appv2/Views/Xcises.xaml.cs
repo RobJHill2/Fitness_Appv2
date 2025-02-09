@@ -18,7 +18,7 @@ namespace Fitness_Appv2.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            XcisesList = await App.Db.GetXcisesAsync();
+            XcisesList = await App.Db.GetXcisesAsync(); // needed since itemssource is IEnumerable not List
             xcisesView.ItemsSource = XcisesList;
         }
         private async void SubmitXcise_ClickedAsync(object sender, EventArgs e){
@@ -30,13 +30,18 @@ namespace Fitness_Appv2.Views
                 if (!string.IsNullOrEmpty(name) && !existingXcises.Contains(name))
                 {
                     submitXcise.Text = "Submitted";
-                    App.Db.SaveXciseAsync(new XcisesTable
+                    await App.Db.SaveXciseAsync(new XcisesTable
                     {
                         XciseNameAttribute = name,
                         IsBodyweightAttribute = isBodyweight,
                     });
+                    
+                    XcisesList = null;
+                    XcisesList = await App.Db.GetXcisesAsync();
+
                     xcisesView.ItemsSource = null;
-                    xcisesView.ItemsSource = await App.Db.GetXcisesAsync();
+                    xcisesView.ItemsSource = XcisesList;
+
                     xciseNameInput.Text = "";
                     isBodyweightInput.IsChecked = false;
                     await Task.Delay(1500);

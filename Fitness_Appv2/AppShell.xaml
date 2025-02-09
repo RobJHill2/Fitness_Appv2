@@ -80,7 +80,7 @@
         https://docs.microsoft.com/dotnet/api/xamarin.forms.shellgroupitem.flyoutdisplayoptions?view=xamarin-forms
     -->
     <FlyoutItem Title="Home"> <!-- Copy and pasted from template, but changed pages to be my page names -->
-        <ShellContent Route="HomePage" ContentTemplate="{DataTemplate local:HomePage}" />
+        <ShellContent Route="Home" ContentTemplate="{DataTemplate local:Home}" />
     </FlyoutItem>
     <FlyoutItem Title="Add Sets">
         <ShellContent Route="AddSets" ContentTemplate="{DataTemplate local:AddSets}"/>

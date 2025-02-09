@@ -16,14 +16,14 @@
                     </CollectionView.ItemTemplate>
                 </CollectionView>
             
-                <Grid x:Name = "ComponentsEdit" RowDefinitions= "Auto, Auto, Auto, Auto" IsVisible="False" Grid.Row="1">
+                <Grid x:Name = "ComponentEdits" RowDefinitions= "Auto, Auto, Auto, Auto" IsVisible="False" Grid.Row="1">
                     <Picker x:Name="xcisePicker" 
                             Title="Select Exercise"
                             ItemDisplayBinding="{Binding XciseNameAttribute}"
                             Grid.Row="0"/>
                     <Entry x:Name="setsInput" Placeholder="Input Sets" Keyboard="Numeric" Grid.Row="1"/>
                     <Button x:Name="deleteComponent" Text="Delete" Clicked="DeleteComponent_Clicked" Grid.Row="2"/>
-                    <Button x:Name="continue" Text="Continue" Clicked="Continue_Clicked" Grid.Row="3"/>
+                    <Button x:Name="defineComponent" Text="Define Sets" Clicked="DefineComponent_Clicked" Grid.Row="3"/>
                 </Grid>
                 <Button x:Name="newComponent" Text = "Add Exercise" Clicked="NewComponent_Clicked" Grid.Row="2"/>
             </Grid>
@@ -39,7 +39,7 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-                <Grid x:Name = "SetEdit" RowDefinitions= "Auto, Auto, Auto" IsVisible="False" Grid.Row="1">
+                <Grid x:Name = "SetEdits" RowDefinitions= "Auto, Auto, Auto" IsVisible="False" Grid.Row="1">
                     <Entry x:Name="repsInput" Placeholder = "Input Reps" Keyboard="Numeric" Grid.Row="0"/>
                     <Entry x:Name="weightInput" Placeholder= "Input Weight" Keyboard="Numeric" Grid.Row="1"/>
                     <Button x:Name="saveSet" Text = "Save" Clicked = "SaveSet_Clicked" Grid.Row="2"/>

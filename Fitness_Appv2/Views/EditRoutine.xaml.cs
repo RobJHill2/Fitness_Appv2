@@ -19,15 +19,15 @@ namespace Fitness_Appv2.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            ComponentsEdit.IsVisible = false;
+            ComponentEdits.IsVisible = false;
             xcisePicker.ItemsSource = await App.Db.GetXciseNamesAsync();
-            RoutineName.Text = await App.Db.GetRoutineNameAsync(RoutineId);
             if (RoutineId == 0)
             {
                 activeComponents = new List<DisplayComponentsDataModel>() { new DisplayComponentsDataModel() { Id = 1 } };
             }
             else
             {
+                RoutineName.Text = await App.Db.GetRoutineNameAsync(RoutineId);
                 activeComponents = await App.Db.GetRoutineComponentsToEditAsync(RoutineId);
             }
             ComponentsView.ItemsSource = activeComponents;
@@ -48,7 +48,7 @@ namespace Fitness_Appv2.Views
         private void ComponentsView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             currComponentIndex = activeComponents.IndexOf(e.CurrentSelection[0] as DisplayComponentsDataModel);
-            ComponentsEdit.IsVisible = true;
+            ComponentEdits.IsVisible = true;
             xcisePicker.SelectedIndex = activeComponents[currComponentIndex].XciseIdAttribute - 1; // SelectedIndex starts from 0, XciseIdAttribute starts from 1 (SelectedIndex = -1 --> xcisePicker not set)
             if (activeComponents[currComponentIndex].SetsAttribute != 0)
             {
@@ -70,12 +70,12 @@ namespace Fitness_Appv2.Views
             activeComponents[currComponentIndex].SetsAttribute = sets;
             ComponentsView.ItemsSource = null;
             ComponentsView.ItemsSource = activeComponents;
-            ComponentsEdit.IsVisible = false;
+            ComponentEdits.IsVisible = false;
         }
         private void DeleteComponent_Clicked(object sender, EventArgs e)
         {
             activeComponents.RemoveAt(currComponentIndex);
-            ComponentsEdit.IsVisible = false;
+            ComponentEdits.IsVisible = false;
             ComponentsView.ItemsSource = null;
             ComponentsView.ItemsSource = activeComponents;
         }

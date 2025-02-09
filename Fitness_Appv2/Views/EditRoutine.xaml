@@ -15,7 +15,7 @@
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-            <Grid x:Name = "ComponentsEdit" RowDefinitions= "Auto, Auto, Auto, Auto, Auto" IsVisible="False" Grid.Row="2">
+            <Grid x:Name = "ComponentEdits" RowDefinitions= "Auto, Auto, Auto, Auto, Auto" IsVisible="False" Grid.Row="2">
                 <Picker x:Name="xcisePicker" 
                         Title="Select Exercise"
                         ItemDisplayBinding="{Binding XciseNameAttribute}"

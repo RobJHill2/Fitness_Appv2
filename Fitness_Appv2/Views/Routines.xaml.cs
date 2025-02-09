@@ -1,4 +1,4 @@
-﻿using Fitness_Appv2.Services;
+﻿ using Fitness_Appv2.Services;
 using System;
 using System.Collections.Generic;
 using Xamarin.Forms;
@@ -16,7 +16,6 @@ namespace Fitness_Appv2.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            RoutineOptions.IsVisible = false;
             displayedRoutines = await App.Db.GetRoutinesAsync();
             RoutinesView.ItemsSource = displayedRoutines;
         }

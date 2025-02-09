@@ -2,9 +2,9 @@
 
 namespace Fitness_Appv2.Views
 {
-    public partial class HomePage : ContentPage
+    public partial class Home : ContentPage
     {
-        public HomePage()
+        public Home()
         {
             InitializeComponent();
         }

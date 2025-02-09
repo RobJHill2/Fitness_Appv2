@@ -39,7 +39,7 @@ namespace Fitness_Appv2.Views
         private void ComponentsView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             currComponentIndex = activeComponents.IndexOf(e.CurrentSelection[0] as LogRoutineComponentDataModel);
-            ComponentsEdit.IsVisible = true;
+            ComponentEdits.IsVisible = true;
             xcisePicker.SelectedIndex = activeComponents[currComponentIndex].XciseIdAttribute - 1;
             if (activeComponents[currComponentIndex].SetsAttribute != 0)
             {
@@ -54,13 +54,13 @@ namespace Fitness_Appv2.Views
         private void DeleteComponent_Clicked(object sender, EventArgs e)
         {
             activeComponents.RemoveAt(currComponentIndex); // tempId not changing when delete therefore transition to index based
-            ComponentsEdit.IsVisible = false;
+            ComponentEdits.IsVisible = false;
             ComponentsView.ItemsSource = null;
             ComponentsView.ItemsSource = activeComponents;
         }
-        private void Continue_Clicked(object sender, EventArgs e)
+        private void DefineComponent_Clicked(object sender, EventArgs e)
         {
-            if (setsInput.Text != "")
+            if (Convert.ToInt16(setsInput.Text) > 0)
             {
                 bool setsChanged = false; 
                 AlterRoutine.IsVisible = false;
@@ -88,7 +88,7 @@ namespace Fitness_Appv2.Views
         private void SetsView_SelectionChanged (object sender, SelectionChangedEventArgs e)
         {
             currSetIndex = (e.CurrentSelection[0] as SetLogDataModel).Index;
-            SetEdit.IsVisible = true;
+            SetEdits.IsVisible = true;
             if (activeComponents[currComponentIndex].SetsList[currSetIndex].Reps != 0)
             {
                 repsInput.Text = Convert.ToString(activeComponents[currComponentIndex].SetsList[currSetIndex].Reps);
@@ -117,23 +117,14 @@ namespace Fitness_Appv2.Views
             activeComponents[currComponentIndex].SetsList[currSetIndex].Weight = weight;
             SetsView.ItemsSource = null;
             SetsView.ItemsSource = activeComponents[currComponentIndex].SetsList;
-            SetEdit.IsVisible = false;
+            SetEdits.IsVisible = false;
         }
         private void EditFinished_Clicked(object sender, EventArgs e)
         {
-            SetsData .IsVisible = false;
+            SetsData.IsVisible = false;
             AlterRoutine.IsVisible = true;
             ComponentsView.ItemsSource = null;
             ComponentsView.ItemsSource = activeComponents;
-            if (activeComponents[currComponentIndex].SetsAttribute != 0)
-            {
-                setsInput.Text = Convert.ToString(activeComponents[currComponentIndex].SetsAttribute);
-            }
-            else
-            {
-                setsInput.Text = "";
-            }
-            repsInput.Text = weightInput.Text = "";
         }
 
         private async void LogWorkout_ClickedAsync(object sender, EventArgs e)
@@ -160,7 +151,8 @@ namespace Fitness_Appv2.Views
                
                 foreach (SetLogDataModel set in component.SetsList)
                 {
-                    if (set.Reps <= 0 || (set.Weight <= 0 && !isBodyweight))
+                    if (isBodyweight) { set.Weight = set.Weight + userdata.BodyweightAttribute; }
+                    if ((set.Reps <= 0) || (set.Weight <= 0))
                     {
                         inputObjection.IsVisible = true;
                         inputObjection.Text = "Workout Data Incomplete";
@@ -176,13 +168,8 @@ namespace Fitness_Appv2.Views
                 bool isBodyweight = await App.Db.GetIsBodyweightXciseAsync(component.XciseIdAttribute);
                 foreach (SetLogDataModel set in component.SetsList)
                 {
-                    float weight;
-                    if (isBodyweight) { weight = set.Weight + userdata.BodyweightAttribute; }
-                    else { weight = set.Weight; }
-                    float reps = set.Reps;
-                    float e1RMax = Utilities.GetE1RMax(reps, weight);
-
-                    App.Db.SaveSetAsync(new PendingSetsTable
+                    float e1RMax = Utilities.GetE1RMax(set.Reps, set.Weight);
+                    await App.Db.SaveSetAsync(new PendingSetsTable
                     {
                         XciseIdAttribute = component.XciseIdAttribute,
                         DateAttribute = date,

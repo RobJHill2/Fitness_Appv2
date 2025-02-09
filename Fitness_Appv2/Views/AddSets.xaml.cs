@@ -2,7 +2,6 @@
 using System;
 using System.Threading.Tasks;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
 
 namespace Fitness_Appv2.Views
 {
@@ -49,11 +48,11 @@ namespace Fitness_Appv2.Views
                     }
                 }
                 
-                if ((reps > 0) && (weight > 0 || xciseIsBodyweight)) //sanitisation
+                if ((reps > 0) && (weight > 0)) //sanitisation
                 {
                     DateTime date = DateTime.Today;
                     float e1RMax = Utilities.GetE1RMax(reps, weight);
-                    App.Db.SaveSetAsync(new PendingSetsTable
+                    await App.Db.SaveSetAsync(new PendingSetsTable
                     {
                         XciseIdAttribute = xciseId,
                         DateAttribute = date,
@@ -69,6 +68,7 @@ namespace Fitness_Appv2.Views
                 {
                     inputObjection.IsVisible = true;
                     inputObjection.Text = "Reps and Weight must be above 0 if it is not a Bodyweight Exercise";
+                    return;
                 }
                 await Task.Delay(1500);
                 submitSet.Text = "Submit Set";
