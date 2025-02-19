@@ -26,7 +26,7 @@ namespace Fitness_Appv2.Services
         private async void MaintainDBAsync()
         {
             DateTime startOfThisMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-            List<PendingSetsTable> data = await DbCon.QueryAsync<PendingSetsTable>("SELECT * FROM PendingSetsTable WHERE DateAttribute <> ? ORDER BY E1RMaxAttribute DESC;", DateTime.Today); // alter program
+            List<PendingSetsTable> data = await DbCon.QueryAsync<PendingSetsTable>("SELECT * FROM PendingSetsTable WHERE DateAttribute <> ? ORDER BY E1RMaxAttribute DESC;", DateTime.Today);
             if (data.Count() != 0)
             {
                 UpdateWeeklyConsistencyAsync(data.Where(obj => obj.DailyMedianTakenAttribute == false).ToList());
@@ -63,7 +63,7 @@ namespace Fitness_Appv2.Services
                 List<PendingSetsTable> monthlyData = xciseData.Where(obj => obj.DateAttribute < startOfThisMonth).ToList();
                 if (monthlyData.Count() != 0)
                 {
-                    List<DateTime> monthsList = monthlyData.Select(obj => new DateTime(obj.DateAttribute.Year, obj.DateAttribute.Month, 1)).Distinct().ToList(); // test this works
+                    List<DateTime> monthsList = monthlyData.Select(obj => new DateTime(obj.DateAttribute.Year, obj.DateAttribute.Month, 1)).Distinct().ToList();
                     foreach (DateTime month in monthsList)
                     {
                         DateTime LB = month;
@@ -223,9 +223,10 @@ namespace Fitness_Appv2.Services
                 }
             }
 
-            public async void SaveRoutineAsync(RoutinesTable saveData) 
+            public async Task<int> SaveRoutineAsync(RoutinesTable saveData) // returns int of new routine
             {
                 await DbCon.InsertAsync(saveData);
+                return saveData.Id;
             }
 
             public async Task<string> GetRoutineNameAsync(int Id)

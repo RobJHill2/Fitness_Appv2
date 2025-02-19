@@ -4,8 +4,5 @@
     { 
         public int SetsAttribute { get; set; }
         public int RoutineAttribute { get; set; }
-
-
     }
 }
-

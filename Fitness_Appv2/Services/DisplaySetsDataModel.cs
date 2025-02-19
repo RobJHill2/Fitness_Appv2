@@ -7,8 +7,5 @@ namespace Fitness_Appv2.Services
         public float E1RMaxAttribute { get; set; }
         public DateTime DateAttribute { get; set; }
         public bool DailyMedianTakenAttribute { get; set; }
-
-
     }
 }
-

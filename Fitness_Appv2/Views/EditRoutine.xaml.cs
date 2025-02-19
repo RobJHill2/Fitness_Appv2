@@ -100,9 +100,8 @@ namespace Fitness_Appv2.Views
 
             if (RoutineId == 0) // i.e. if Routine is new 
             {
-                App.Db.SaveRoutineAsync(new RoutinesTable { NameAttribute = RoutineName.Text });
-                List<RoutinesTable> routines = await App.Db.GetRoutinesAsync();
-                RoutineId = routines.Last().Id;
+                RoutinesTable newRoutine = new RoutinesTable { NameAttribute = RoutineName.Text };
+                RoutineId = await App.Db.SaveRoutineAsync(newRoutine);
             }
             else
             {
