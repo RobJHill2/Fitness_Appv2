@@ -23,25 +23,25 @@ namespace Fitness_Appv2.Views
         {
             List<UserDataTable> userdata = await App.Db.GetUserDataAsync(); // get user data orders by date descending
             UserDataTable latest = userdata[0];
-            
-            // no need to check for null as CheckNeedNewUserData is called (sets bodyweight & goal = 0 on null)
-            if (latest.BodyweightAttribute != 0)
-            {                 
-                BodyweightDisplay.Text = "Current Bodyweight: \n" + latest.BodyweightAttribute;
-            }               
-            else 
-            {
-                BodyweightDisplay.Text = "Current Bodyweight: \nNot Set";
-            }
+
+            // no need to check for null as CheckNeedNewUserData is called(sets bodyweight &goal = 0 on null)
+                if (latest.BodyweightAttribute != 0)
+                {
+                    BodyweightDisplay.Text = "Current Bodyweight: \n" + latest.BodyweightAttribute;
+                }
+                else
+                {
+                    BodyweightDisplay.Text = "Current Bodyweight: \nNot Set";
+                }
             if (latest.WeeklyConsistencyGoalAttribute != 0)
             {
                 ConsistencyGoalDisplay.Text = "Current Goal: \n" + latest.WeeklyConsistencyGoalAttribute;
-            } 
+            }
             else
             {
                 ConsistencyGoalDisplay.Text = "Current Goal: \nNot Set";
             }
-        
+
             DateTime lastMonday = Utilities.GetLastMonday();
             UserDataTable userdataLastWeek;
             try
@@ -52,14 +52,15 @@ namespace Fitness_Appv2.Views
             {
                 userdataLastWeek = null;
             }
-            
+
             if (userdataLastWeek != null)
             {
                 if (userdataLastWeek.WeeklyConsistencyGoalAttribute != 0)
                 {
                     ConsistencyDisplay.Text = "Last Week's Consistency: \n" + userdataLastWeek.WeeklyConsistencyAttribute
                     + " out of " + userdataLastWeek.WeeklyConsistencyGoalAttribute;
-                } else
+                }
+                else
                 {
                     ConsistencyDisplay.Text = "Last Week's Consistency: \n" + userdataLastWeek.WeeklyConsistencyAttribute;
                 }

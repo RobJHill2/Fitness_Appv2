@@ -25,6 +25,7 @@ namespace Fitness_Appv2.Services
         }
         private async void MaintainDBAsync()
         {
+            await CheckNeedNewUserDataAsync();
             DateTime startOfThisMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             List<PendingSetsTable> data = await DbCon.QueryAsync<PendingSetsTable>("SELECT * FROM PendingSetsTable WHERE DateAttribute <> ? ORDER BY E1RMaxAttribute DESC;", DateTime.Today);
             if (data.Count() != 0)
@@ -125,14 +126,14 @@ namespace Fitness_Appv2.Services
                     return null;
                 }
             }
-            public async Task<int> SaveSetAsync(PendingSetsTable saveData) // must return a non-void as must be awaited for collectionview to update
+            public async Task SaveSetAsync(PendingSetsTable saveData)
             {
                 undoRedoStack[topPointer] = saveData;
                 topPointer++;
                 if (topPointer == undoRedoStack.Count()) { undoRedoStack.Add(null); } // if at top of stack add null value (makes checking redo validity simpler)
                 for (int i = topPointer; i < undoRedoStack.Count(); i++) { undoRedoStack[i] = null; } // clears anything above topPointer as new branch has started so redo should be impossible 
 
-                return await DbCon.InsertAsync(saveData); 
+                await DbCon.InsertAsync(saveData); 
                 // when this happens the respective object in the undoRedoStack has its Id updated (autoincrement has a delayed effect?)
             }
 
@@ -169,9 +170,9 @@ namespace Fitness_Appv2.Services
                 }
             }
 
-            public async Task<int> SaveXciseAsync(XcisesTable saveData)
+            public async Task SaveXciseAsync(XcisesTable saveData)
             {
-                return await DbCon.InsertAsync(saveData);
+                await DbCon.InsertAsync(saveData);
             }
 
             public async Task<List<XcisesTable>> GetXciseIdsAsync()
@@ -223,7 +224,7 @@ namespace Fitness_Appv2.Services
                 }
             }
 
-            public async Task<int> SaveRoutineAsync(RoutinesTable saveData) // returns int of new routine
+            public async Task<int> SaveRoutineAsync(RoutinesTable saveData) // returns id of new routine
             {
                 await DbCon.InsertAsync(saveData);
                 return saveData.Id;
@@ -348,22 +349,19 @@ namespace Fitness_Appv2.Services
 
             public async void UpdateBodyweightThisWeekAsync(float bodyweight)
             {
-                await CheckNeedNewUserDataAsync();
                 await DbCon.QueryAsync<UserDataTable>("UPDATE UserDataTable SET BodyweightAttribute = ? WHERE DateAttribute = ?;", bodyweight, Utilities.GetLastMonday());
             }
 
             public async void UpdateConsistencyGoalThisWeekAsync(int consistency)
             {
-                await CheckNeedNewUserDataAsync();
                 await DbCon.QueryAsync<UserDataTable>("UPDATE UserDataTable SET WeeklyConsistencyGoalAttribute = ? WHERE DateAttribute = ?;", consistency, Utilities.GetLastMonday());
             }
 
             public async Task<UserDataTable> GetThisWeeksUserDataAsync()
             {
-                await CheckNeedNewUserDataAsync();
                 try
                 {
-                return (await DbCon.QueryAsync<UserDataTable>("SELECT * FROM UserDataTable ORDER BY DateAttribute DESC;"))[0];
+                    return (await DbCon.QueryAsync<UserDataTable>("SELECT * FROM UserDataTable ORDER BY DateAttribute DESC;"))[0];
                     
                 }
                 catch
@@ -372,41 +370,52 @@ namespace Fitness_Appv2.Services
                 }
             }
 
-            public async Task<bool> CheckNeedNewUserDataAsync()
-            {
-                List<UserDataTable> userdata = (await DbCon.QueryAsync<UserDataTable>("SELECT * FROM UserDataTable ORDER BY DateAttribute DESC;"));
-                // can't use GetUserDataAsync as it calls this method
-                if (userdata == null || userdata[0].DateAttribute < Utilities.GetLastMonday())
-                {
-                    // if no userdata for this week
-
-                    float bodyweight;
-                    int weeklyConsistencyGoal;
-                    if (userdata == null) { bodyweight = 0; weeklyConsistencyGoal = 0; }
-                    else { bodyweight = userdata[0].BodyweightAttribute; weeklyConsistencyGoal = userdata[0].WeeklyConsistencyGoalAttribute; }
-                    await DbCon.InsertAsync(new UserDataTable
-                    {
-                        BodyweightAttribute = bodyweight,
-                        DateAttribute = Utilities.GetLastMonday(),
-                        WeeklyConsistencyAttribute = 0,
-                        WeeklyConsistencyGoalAttribute = weeklyConsistencyGoal
-                    });
-                }
-                return true;
-            }
-
             public async Task<List<UserDataTable>> GetUserDataAsync()
             {
-                await CheckNeedNewUserDataAsync();
-                try
+            try
                 {
                     return await DbCon.QueryAsync<UserDataTable>("SELECT * FROM UserDataTable ORDER BY DateAttribute DESC;");
                 }
-                catch
+            catch
                 {
                     return null;
                 }
             }
+
+        public async Task CheckNeedNewUserDataAsync()
+            {
+            List<UserDataTable> userdata;
+            try
+                {
+                userdata = await DbCon.QueryAsync<UserDataTable>("SELECT * FROM UserDataTable ORDER BY DateAttribute DESC;");
+                } 
+            catch 
+                {
+                userdata = null;
+                }  
+                // can't use GetUserDataAsync as it calls this method
+            if (userdata == null || userdata.Count() == 0)
+            {
+                // if no userdata for this week
+
+                await DbCon.InsertAsync(new UserDataTable
+                {
+                    BodyweightAttribute = 0,
+                    DateAttribute = Utilities.GetLastMonday(),
+                    WeeklyConsistencyAttribute = 0,
+                    WeeklyConsistencyGoalAttribute = 0
+                });
+            } else if (userdata[0].DateAttribute < Utilities.GetLastMonday())
+            {
+                await DbCon.InsertAsync(new UserDataTable
+                {
+                    BodyweightAttribute = userdata[0].BodyweightAttribute,
+                    DateAttribute = Utilities.GetLastMonday(),
+                    WeeklyConsistencyAttribute = 0,
+                    WeeklyConsistencyGoalAttribute = userdata[0].WeeklyConsistencyGoalAttribute
+                });
+            }
+        }
 
             public async void UpdateWeeklyConsistencyAsync(List<PendingSetsTable> newSets)
             {
