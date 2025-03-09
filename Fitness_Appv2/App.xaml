@@ -36,9 +36,11 @@
             </Style>
             <Style TargetType="Entry">
                 <Setter Property="TextColor" Value="Black"/>
+                <Setter Property="PlaceholderColor" Value="DarkGray"/>
             </Style>
             <Style TargetType="Picker">
                 <Setter Property="TextColor" Value="Black"/>
+                <Setter Property="TitleColor" Value="DarkGray"/>
             </Style>
         </ResourceDictionary>        
     </Application.Resources>
