@@ -112,7 +112,7 @@ namespace Fitness_Appv2.Views
             {
                 component.Id = 0; // reset to 0 so autoIncrement is triggered (autoIncrement starts from 1)
                 component.RoutineAttribute = RoutineId;
-                App.Db.SaveRoutineComponentAsync(new RoutineComponentsTable() { RoutineAttribute = component.RoutineAttribute, SetsAttribute = component.SetsAttribute, XciseIdAttribute = component.SetsAttribute});
+                App.Db.SaveRoutineComponentAsync(new RoutineComponentsTable() { RoutineAttribute = component.RoutineAttribute, SetsAttribute = component.SetsAttribute, XciseIdAttribute = component.XciseIdAttribute});
             }
             await Navigation.PopAsync();
 
