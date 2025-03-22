@@ -76,7 +76,7 @@ namespace Fitness_Appv2.Views
                     else if (userDataSecondaryChoice == "Consistency")
                     {
                         chartSeries.ItemsSource = consistencyGraphSource;
-                        chartSeries.YBindingPath = "ConsistencyAttribute";
+                        chartSeries.YBindingPath = "WeeklyConsistencyAttribute";
                     }
                 }
             }

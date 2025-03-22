@@ -23,9 +23,6 @@
 
             <chart:SfChart.SecondaryAxis>
                 <chart:NumericalAxis>
-                    <chart:NumericalAxis.Title>
-                        <chart:ChartAxisTitle Text = "e1RM"/>
-                    </chart:NumericalAxis.Title>
                 </chart:NumericalAxis>
             </chart:SfChart.SecondaryAxis>
 
