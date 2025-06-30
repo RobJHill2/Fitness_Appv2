@@ -113,22 +113,36 @@ namespace Fitness_Appv2.Services
             if (monthMedians.Count() >= NumPoints)
             {
                 List<(int t, float e1RM)> datapoints = new List<(int, float)> { };
+
+                bool cancel = false;
                 for (int i = 1 - NumPoints; i <= 0; i++)
                 {
-                    datapoints.Add((i, monthMedians[monthMedians.Count() - 1 + i].E1RMaxAttribute)); // for NumPoints = 3: i is -2, -1, 0 
+                    float e1RMtemp = monthMedians[monthMedians.Count() - 1 + i].E1RMaxAttribute;
+                    
+                    if (e1RMtemp <= 0)
+                    {
+                        cancel = true;
+                        break;
+                    } // if 0 value in last 3 months, cancels goal
+
+                    datapoints.Add((i, e1RMtemp)); // for NumPoints = 3: i is -2, -1, 0 
                 } // adds the last n monthMedians to datapoints
-                int tSum = datapoints.Select(x => x.t).Sum();
-                int t2Sum = Convert.ToInt16(datapoints.Select(x => Math.Pow(x.t, 2)).Sum());
-                float e1RMSum = datapoints.Select(x => x.e1RM).Sum();
-                float te1RMSum = datapoints.Select(x => x.t * x.e1RM).Sum();
 
-                float gradient = ((NumPoints * te1RMSum) - (tSum * e1RMSum)) / ((NumPoints * t2Sum) - Convert.ToInt16(Math.Pow(tSum, 2))); // regression formula
-                // linear regression formula: gradient = (n∑xy - ∑x*∑y) / (n∑x^2 - (∑x)^2)
-                float goal;
-                if (gradient > 0) { goal = datapoints.Last().e1RM + gradient * (GoalLength + 1); }
-                else { goal = datapoints.Last().e1RM; } // Will not give a goal that is less than the last month
+                if (cancel == false)
+                {
+                    int tSum = datapoints.Select(x => x.t).Sum();
+                    int t2Sum = Convert.ToInt16(datapoints.Select(x => Math.Pow(x.t, 2)).Sum());
+                    float e1RMSum = datapoints.Select(x => x.e1RM).Sum();
+                    float te1RMSum = datapoints.Select(x => x.t * x.e1RM).Sum();
 
-                await DbCon.QueryAsync<XcisesTable>("UPDATE XcisesTable SET GoalAttribute = ? WHERE Id = ?;", goal, xcise);
+                    float gradient = ((NumPoints * te1RMSum) - (tSum * e1RMSum)) / ((NumPoints * t2Sum) - Convert.ToInt16(Math.Pow(tSum, 2))); // regression formula
+                                                                                                                                               // linear regression formula: gradient = (n∑xy - ∑x*∑y) / (n∑x^2 - (∑x)^2)
+                    float goal;
+                    if (gradient > 0) { goal = datapoints.Last().e1RM + gradient * (GoalLength + 1); }
+                    else { goal = datapoints.Last().e1RM; } // Will not give a goal that is less than the last month
+
+                    await DbCon.QueryAsync<XcisesTable>("UPDATE XcisesTable SET GoalAttribute = ? WHERE Id = ?;", goal, xcise);
+                }
             }
         }
 
